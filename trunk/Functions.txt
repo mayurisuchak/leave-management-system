@@ -1,0 +1,22 @@
+A. User function
+	1. Login
+	2. Change pass
+	3. See leave details: 		a. history
+				b. days of leave
+				c. balance
+	4. Operate leave activity:   	a. apply a leave (days, reason, address to contact)
+				b. check status (accepted or not)
+				c. withdraw (before accepted)
+				d. cancel (after accepted)
+	5. Help
+
+B. Boss function (inherit user)
+Additional function:
+	1. Accept a leave
+	2. Reject a leave
+
+C. System function
+	1. Save log
+	2. Create policy (days of leave per year)
+	3. Summary report (send to his/her boss periodically)
+	4. Mark public holiday
