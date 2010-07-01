@@ -5,6 +5,7 @@ CREATE DATABASE LeaveManagementSystem
 GO
 USE LeaveManagementSystem
 GO
+/*************************************************************************** Create Table **************************************************************************/
 /* Create table Position ********************************************************************/
 CREATE TABLE Position(
 	PositionID INT IDENTITY,
@@ -54,6 +55,52 @@ CREATE TABLE [LOG](
 	CONSTRAINT FR_Log_LeaveID FOREIGN KEY (LeaveID) REFERENCES Leave(LeaveID)
 )
 GO
+/*************************************************************************** Create View **************************************************************************/
+/* Create view leave full detail ************************************************************/
+CREATE VIEW LeaveFullDetail
+AS
+SELECT Leave.*, [User].SuperiorID
+	FROM [User], Leave
+	WHERE Leave.UserID = [User].UserID
+GO
+/* Create view subordinate detail ***********************************************************/
+CREATE VIEW SubordinateDetail
+AS
+SELECT SuperiorID, [User].UserID AS Code, Fullname AS Name, Position.LeaveDays AS [Total leave Days], (Position.LeaveDays - LeaveDays.LeaveDays) AS [Remaining leave days]
+	FROM [User], Position, 
+		(SELECT UserID, SUM(DATEDIFF(dy,DateStart,DateEnd)+1) AS LeaveDays
+			FROM Leave
+			GROUP BY UserID
+		) AS LeaveDays
+	WHERE Position.PositionID = [User].PositionID
+GO
+/*************************************************************************** Create Procedure View **************************************************************************/
+/* Create procedure view submited leave detail application **********************************/
+CREATE PROCEDURE sp_SubmitedLeaves
+	@SuperiorID INT
+AS
+SELECT * 
+	FROM LeaveFullDetail
+	WHERE SuperiorID = @SuperiorID AND YEAR(DateStart) LIKE YEAR(GETDATE())
+GO
+/* Create procedure view leave detail application *******************************************/
+CREATE PROCEDURE sp_LeaveDetail
+	@UserID INT,
+	@Year INT
+AS
+SELECT [Subject], DateStart AS [From], DateEnd AS [To], [State] AS [Status]
+	FROM Leave
+	WHERE UserID = @UserID AND YEAR(DateStart) LIKE @Year
+GO
+/* Create procedure view subordinate detail *************************************************/
+CREATE PROCEDURE sp_SubordinateDetail
+	@UserID INT
+AS
+SELECT * 
+	FROM SubordinateDetail
+	WHERE SuperiorID = @UserID
+GO
+/*************************************************************************** Create Procedure Modify **************************************************************************/
 /* Create procedure change password *********************************************************/
 CREATE PROCEDURE sp_ChangePassword 
 	@UserID INT,
@@ -75,7 +122,7 @@ INSERT INTO [LOG]
 		@UserID,
 		@Time,
 		@ACtion,
-		LeaveID
+		@LeaveID
 	)
 GO
 /* Create procedure create new leave application ********************************************/
@@ -89,21 +136,61 @@ CREATE PROCEDURE sp_ApplyLeave
 	@Subject VARCHAR(30)
 AS
 BEGIN
-	DECLARE @CurrentLeaveDays INT
-	SELECT @CurrentLeaveDays = Position.LeaveDays
-		FROM Position, [User]
-		WHERE Position.PositionID = [User].PositionID AND [User].UserID = @UserID
-	INSERT INTO Leave
-		VALUES(
-			@UserID,
-			@DateStart,
-			@DateEnd,
-			'Not Approved',	
-			@Reason,
-			@Communication,
-			@CurrentLeaveDays,
-			@Date,
-			@Subject
-		)
+DECLARE @CurrentLeaveDays INT
+SELECT @CurrentLeaveDays = Position.LeaveDays
+	FROM Position, [User]
+	WHERE Position.PositionID = [User].PositionID AND [User].UserID = @UserID
+INSERT INTO Leave
+	VALUES(
+		@UserID,
+		@DateStart,
+		@DateEnd,
+		'Not Approved',	
+		@Reason,
+		@Communication,
+		@CurrentLeaveDays,
+		@Date,
+		@Subject
+	)
+END
+GO
+/* Create procedure withdraw/cancel leave ***************************************************/
+CREATE PROCEDURE sp_CancelLeave
+	@LeaveID INT
+AS
+BEGIN
+UPDATE Leave
+	SET [State] = 'Withdrawed'
+	WHERE LeaveID = @LeaveID AND [State] = 'Not Approved'
+IF (@@ROWCOUNT = 0)
+	UPDATE Leave
+		SET [State] = 'Canceling'
+		WHERE LeaveID = @LeaveID AND [State] = 'Approved'
+END
+GO
+/* Create procedure approve/reject leave/request ********************************************/
+CREATE PROCEDURE sp_ManageRequest 
+	@LeaveID INT,
+	@Allowance BIT
+AS
+BEGIN
+IF (@Allowance = 1)
+	UPDATE Leave 
+		SET [State] = 'Approved'
+		WHERE LeaveID = @LeaveID AND [State] = 'Not Approved'
+ELSE
+	UPDATE Leave 
+		SET [State] = 'Rejected'
+		WHERE LeaveID = @LeaveID AND [State] = 'Not Approved'
+
+IF (@@ROWCOUNT = 0)
+	IF (@Allowance = 1)
+	UPDATE Leave 
+		SET [State] = 'Canceled'
+		WHERE LeaveID = @LeaveID AND [State] = 'Canceling'
+	ELSE
+		UPDATE Leave 
+			SET [State] = 'Cancel-Rejected'
+			WHERE LeaveID = @LeaveID AND [State] = 'Canceling'
 END
 GO
