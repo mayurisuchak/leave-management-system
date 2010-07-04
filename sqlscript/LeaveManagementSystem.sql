@@ -9,7 +9,7 @@ GO
 /* Create table Position ********************************************************************/
 CREATE TABLE Position(
 	PositionID INT IDENTITY,
-	PositionName VARCHAR(15) NOT NULL,
+	PositionName VARCHAR(30) NOT NULL,
 	LeaveDays INT NOT NULL,
 	CONSTRAINT PK_Position_PositionID PRIMARY KEY (PositionID)
 )
@@ -194,3 +194,24 @@ IF (@@ROWCOUNT = 0)
 			WHERE LeaveID = @LeaveID AND [State] = 'Canceling'
 END
 GO
+/* Add records ******************************************************************************/
+INSERT INTO Position VALUES('Engineer',15)
+INSERT INTO Position VALUES('Manager',16)
+INSERT INTO Position VALUES('Business Manager',17)
+INSERT INTO Position VALUES('Managing Director',18)
+--pass 12345
+INSERT INTO [User] VALUES('tuannt','827ccb0eea8a706c4c34a16891f84e7b','Tuan Nguyen Trung',1,4)
+INSERT INTO [User] VALUES('tuanlm','827ccb0eea8a706c4c34a16891f84e7b','Tuan Luu Minh',1,3)
+INSERT INTO [User] VALUES('hoanpm','827ccb0eea8a706c4c34a16891f84e7b','Hoan Pham Minh',1,3)
+INSERT INTO [User] VALUES('haidd','827ccb0eea8a706c4c34a16891f84e7b','Hai Dang Dinh',2,2)	
+INSERT INTO [User] VALUES('tamtth','827ccb0eea8a706c4c34a16891f84e7b','Tam Tong Thi Hao',2,2)
+INSERT INTO [User] VALUES('thulth','827ccb0eea8a706c4c34a16891f84e7b','Thu Le Thi Hoai',3,2)
+INSERT INTO [User] VALUES('truongdd','827ccb0eea8a706c4c34a16891f84e7b','Truong Dinh Duc',3,2)
+INSERT INTO [User] VALUES('nhungttk','827ccb0eea8a706c4c34a16891f84e7b','Nhung Tran Thi Kim',4,1)
+INSERT INTO [User] VALUES('lampx','827ccb0eea8a706c4c34a16891f84e7b','Lam Pham Xuan',4,1)	
+INSERT INTO [User] VALUES('vudp','827ccb0eea8a706c4c34a16891f84e7b','Vu Dao Phan',5,1)
+INSERT INTO [User] VALUES('huongnt','827ccb0eea8a706c4c34a16891f84e7b','Huong Nguyen Thanh',5,1)	
+INSERT INTO [User] VALUES('mainq','827ccb0eea8a706c4c34a16891f84e7b','Mai Nuyen Quynh',6,1)
+INSERT INTO [User] VALUES('ngocttm','827ccb0eea8a706c4c34a16891f84e7b','Ngoc Tong Thi Minh',6,1)
+INSERT INTO [User] VALUES('huongctt','827ccb0eea8a706c4c34a16891f84e7b','Huong Cao Thi Thu',7,1)
+INSERT INTO [User] VALUES('diepttm','827ccb0eea8a706c4c34a16891f84e7b','Diep Tran Thi My',7,1)
