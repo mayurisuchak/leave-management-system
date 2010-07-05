@@ -43,7 +43,7 @@ CREATE TABLE Leave(
 )
 GO
 /* Create table Log *************************************************************************/
-CREATE TABLE [LOG](
+CREATE TABLE [Log](
 	LogID INT IDENTITY,
 	UserID INT NOT NULL,
 	[Time] DATETIME NOT NULL UNIQUE,
@@ -73,6 +73,12 @@ SELECT SuperiorID, [User].UserID AS Code, Fullname AS Name, Position.LeaveDays A
 		) AS LeaveDays
 	WHERE Position.PositionID = [User].PositionID
 GO
+/* Create view log detail *******************************************************************/
+CREATE VIEW LogDetail
+AS
+SELECT [Log].UserID, [Log].LeaveID, Time, [User].Username, 'Leave "' + Leave.[Subject] + '": ' & [Log].[Action] as [Action]
+	FROM [Log] INNER JOIN [User] ON ([Log].UserID = [User].UserID) LEFT JOIN Leave ON ([Log].LeaveID = Leave.LeaveID)
+GO
 /*************************************************************************** Create Procedure View **************************************************************************/
 /* Create procedure view submited leave detail application **********************************/
 CREATE PROCEDURE sp_SubmitedLeaves
@@ -92,12 +98,25 @@ SELECT [Subject], DateStart AS [From], DateEnd AS [To], [State] AS [Status]
 	WHERE UserID = @UserID AND YEAR(DateStart) = @Year
 GO
 /* Create procedure view subordinate detail *************************************************/
-CREATE PROCEDURE sp_SubordinateDetail
+CREATE PROCEDURE sp_LogDetail
 	@UserID INT
+AS
+SELECT Time, Username, [Action]
+	FROM LogDetail
+	WHERE UserID = @UserID
+UNION
+SELECT Time, Username, [Action]
+	FROM LogDetail
+	WHERE LeaveID IN (SELECT LeaveID FROM Leave WHERE UserID = @UserID)
+ORDER BY Time
+GO
+/* Create procedure view subordinate detail *********************************************************/
+CREATE PROCEDURE sp_SubordinateDetail
+	@SuperiorID INT
 AS
 SELECT * 
 	FROM SubordinateDetail
-	WHERE SuperiorID = @UserID
+	WHERE SuperiorID = @SuperiorID
 GO
 /*************************************************************************** Create Procedure Modify **************************************************************************/
 /* Create procedure change password *********************************************************/
@@ -120,7 +139,7 @@ INSERT INTO [LOG]
 	VALUES(
 		@UserID,
 		@Time,
-		@ACtion,
+		@Action,
 		@LeaveID
 	)
 GO
