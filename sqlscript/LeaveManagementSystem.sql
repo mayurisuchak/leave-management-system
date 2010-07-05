@@ -89,7 +89,7 @@ CREATE PROCEDURE sp_LeaveDetail
 AS
 SELECT [Subject], DateStart AS [From], DateEnd AS [To], [State] AS [Status]
 	FROM Leave
-	WHERE UserID = @UserID AND YEAR(DateStart) LIKE @Year
+	WHERE UserID = @UserID AND YEAR(DateStart) = @Year
 GO
 /* Create procedure view subordinate detail *************************************************/
 CREATE PROCEDURE sp_SubordinateDetail
