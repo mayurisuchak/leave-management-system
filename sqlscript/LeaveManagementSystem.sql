@@ -36,7 +36,6 @@ CREATE TABLE Leave(
 	[State] VARCHAR(30) NOT NULL,	/* 'Not Approved', 'Approved', 'Rejected', 'Withdrawed', 'Canceling', 'Cancel-Rejected', 'Canceled' */
 	Reason VARCHAR(100) NOT NULL,
 	Communication VARCHAR(50) NOT NULL,
-	CurrentLeaveDays INT NOT NULL,
 	[Date] DATETIME NOT NULL,
 	[Subject] VARCHAR(30) NOT NULL,
 	CONSTRAINT PK_Leave_LeaveID PRIMARY KEY (LeaveID),
@@ -135,11 +134,6 @@ CREATE PROCEDURE sp_ApplyLeave
 	@Date DATETIME,
 	@Subject VARCHAR(30)
 AS
-BEGIN
-DECLARE @CurrentLeaveDays INT
-SELECT @CurrentLeaveDays = Position.LeaveDays
-	FROM Position, [User]
-	WHERE Position.PositionID = [User].PositionID AND [User].UserID = @UserID
 INSERT INTO Leave
 	VALUES(
 		@UserID,
@@ -148,11 +142,9 @@ INSERT INTO Leave
 		'Not Approved',	
 		@Reason,
 		@Communication,
-		@CurrentLeaveDays,
 		@Date,
 		@Subject
 	)
-END
 GO
 /* Create procedure withdraw/cancel leave ***************************************************/
 CREATE PROCEDURE sp_CancelLeave
