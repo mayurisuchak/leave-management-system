@@ -65,11 +65,11 @@ GO
 /* Create view subordinate detail ***********************************************************/
 CREATE VIEW SubordinateDetail
 AS
-SELECT SuperiorID, [User].UserID AS Code, Fullname AS Name, Position.LeaveDays AS [Total leave Days], (Position.LeaveDays - LeaveDays.LeaveDays) AS [Remaining leave days]
+SELECT DISTINCT SuperiorID, [User].UserID AS Code, Fullname AS Name, Position.LeaveDays AS [Total leave Days], (Position.LeaveDays - ISNULL(LeaveDays.LeaveDays,0)) AS [Remaining leave days]
 	FROM [User], Position, 
-		(SELECT UserID, SUM(DATEDIFF(dy,DateStart,DateEnd)+1) AS LeaveDays
-			FROM Leave
-			GROUP BY UserID
+		(SELECT [User].UserID, SUM(DATEDIFF(dy,DateStart,DateEnd)+1) AS LeaveDays
+			FROM [User] LEFT JOIN Leave ON ([User].UserID = Leave.UserID)
+			GROUP BY [User].UserID
 		) AS LeaveDays
 	WHERE Position.PositionID = [User].PositionID
 GO
@@ -222,7 +222,7 @@ INSERT INTO [User] VALUES('nhungttk','827ccb0eea8a706c4c34a16891f84e7b','Nhung T
 INSERT INTO [User] VALUES('lampx','827ccb0eea8a706c4c34a16891f84e7b','Lam Pham Xuan',4,1)	
 INSERT INTO [User] VALUES('vudp','827ccb0eea8a706c4c34a16891f84e7b','Vu Dao Phan',5,1)
 INSERT INTO [User] VALUES('huongnt','827ccb0eea8a706c4c34a16891f84e7b','Huong Nguyen Thanh',5,1)	
-INSERT INTO [User] VALUES('mainq','827ccb0eea8a706c4c34a16891f84e7b','Mai Nuyen Quynh',6,1)
+INSERT INTO [User] VALUES('mainq','827ccb0eea8a706c4c34a16891f84e7b','Mai Nguyen Quynh',6,1)
 INSERT INTO [User] VALUES('ngocttm','827ccb0eea8a706c4c34a16891f84e7b','Ngoc Tong Thi Minh',6,1)
 INSERT INTO [User] VALUES('huongctt','827ccb0eea8a706c4c34a16891f84e7b','Huong Cao Thi Thu',7,1)
 INSERT INTO [User] VALUES('diepttm','827ccb0eea8a706c4c34a16891f84e7b','Diep Tran Thi My',7,1)
