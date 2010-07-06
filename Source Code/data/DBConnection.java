@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.AbstractList;
 import java.sql.Date;
+import java.sql.Statement;
 import java.util.Properties;
 import javax.sql.RowSet;
 import javax.sql.rowset.CachedRowSet;
@@ -32,7 +33,6 @@ public class DBConnection {
             int maxSize= Integer.parseInt(props.getProperty("maxSize"));
             int idleTimeout = Integer.parseInt(props.getProperty("idleTimeout"));
             String url = props.getProperty("url");
-            System.out.println(url);
             cp = new ConnectionPool(name, maxPool, maxSize, idleTimeout, url , props);
             cp.init();
             crs = new CachedRowSetImpl();
@@ -45,8 +45,11 @@ public class DBConnection {
 
     public RowSet query(String sqlString){
         try {
-            crs.setCommand(sqlString);
-            crs.execute(cp.getConnection());
+            Connection conn = cp.getConnection();
+            Statement stm = conn.createStatement();
+            crs.populate(stm.executeQuery(sqlString));
+            stm.close();
+            conn.close();
             return crs;
         } catch (SQLException ex) {
             ex.printStackTrace();
