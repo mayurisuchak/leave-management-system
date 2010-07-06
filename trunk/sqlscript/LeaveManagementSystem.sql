@@ -271,5 +271,28 @@ INSERT INTO [User] VALUES('mainq','827ccb0eea8a706c4c34a16891f84e7b','Mai Nguyen
 INSERT INTO [User] VALUES('ngocttm','827ccb0eea8a706c4c34a16891f84e7b','Ngoc Tong Thi Minh',6,1)
 INSERT INTO [User] VALUES('huongctt','827ccb0eea8a706c4c34a16891f84e7b','Huong Cao Thi Thu',7,1)
 INSERT INTO [User] VALUES('diepttm','827ccb0eea8a706c4c34a16891f84e7b','Diep Tran Thi My',7,1)
+GO
 
-EXEC sp_SubordinateDetail 2, 2000
+IF  EXISTS (SELECT * FROM sys.server_principals WHERE name = N'app')
+DROP LOGIN [app]
+GO
+CREATE LOGIN [app] WITH PASSWORD='abcd1234A', DEFAULT_DATABASE=[LeaveManagementSystem], DEFAULT_LANGUAGE=[us_english], CHECK_EXPIRATION=OFF, CHECK_POLICY=ON
+GO
+
+USE [LeaveManagementSystem]
+GO
+
+IF  EXISTS (SELECT * FROM sys.database_principals WHERE name = N'app')
+DROP USER [app]
+GO
+
+USE [LeaveManagementSystem]
+GO
+
+CREATE USER [app] FOR LOGIN [app] WITH DEFAULT_SCHEMA=[dbo]
+GO
+
+USE [LeaveManagementSystem]
+GO
+
+EXEC sp_addrolemember 'db_owner' , 'app' 
