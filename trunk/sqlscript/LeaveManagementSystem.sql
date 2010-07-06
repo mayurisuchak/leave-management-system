@@ -97,7 +97,7 @@ SELECT [Subject], DateStart AS [From], DateEnd AS [To], [State] AS [Status]
 	FROM Leave
 	WHERE UserID = @UserID AND YEAR(DateStart) = @Year
 GO
-/* Create procedure view subordinate detail *************************************************/
+/* Create procedure view log detail ********************************************************/
 CREATE PROCEDURE sp_LogDetail
 	@UserID INT
 AS
@@ -117,6 +117,14 @@ AS
 SELECT * 
 	FROM SubordinateDetail
 	WHERE SuperiorID = @SuperiorID
+GO
+/* Create procedure check if someone is superior *****************************************************************/
+CREATE PROCEDURE sp_CheckSuperior 
+	@UserID INT
+AS
+SELECT COUNT(Code)
+	FROM SubordinateDetail
+	WHERE SuperiorID = @UserID
 GO
 /*************************************************************************** Create Procedure Modify **************************************************************************/
 /* Create procedure change password *********************************************************/
