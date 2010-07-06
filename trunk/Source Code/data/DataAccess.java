@@ -7,7 +7,7 @@ package data;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
@@ -63,9 +63,19 @@ public class DataAccess {
         return db.query("EXEC sp_SubmitedLeaves " + superiorID);
     }
 
-    // view list of subordinates of superior with id: superiorID
-    public RowSet viewSubordinateDetail(int superiorID){
-        return db.query("EXEC sp_SubordinateDetail " + superiorID);
+    // view report of subordinate in year
+    public RowSet viewSubordinateReport(int superiorID, int year){
+        return db.query("EXEC sp_SubordinateDetail " + superiorID + "," + year);
+    }
+
+    // view list of subordinate which superiorID is in charge of
+    public RowSet viewSubordinateList(int superiorID){
+        return db.query("EXEC sp_Subordinate " + superiorID);
+    }
+
+    // view personal detail in year
+    public RowSet viewPersonalDetail(int userID, int year){
+        return db.query("EXEC sp_PersonalDetail " + userID + "," + year);
     }
 
     // view log detail of an employee with id: userID
@@ -126,6 +136,22 @@ public class DataAccess {
         paramList.add(leaveID);
         paramList.add(allowance);
         return db.query("EXEC sp_ManageRequest ?,?",paramList);
+    }
+
+    // check userid is whether a superior or not
+    public boolean checkSuperior(int userID){
+        try {
+            RowSet rs = db.query("EXEC sp_CheckSuperior " + userID);
+            rs.next();
+            if (rs.getInt(1) > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     public void close(){
