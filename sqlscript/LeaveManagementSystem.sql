@@ -58,20 +58,24 @@ GO
 /* Create view leave full detail ************************************************************/
 CREATE VIEW LeaveFullDetail
 AS
-SELECT Leave.*, [User].SuperiorID
+SELECT Leave.LeaveID as ID, Leave.UserID as Requestor, Leave.[Date], Leave.[Subject], Leave.DateStart as [From], Leave.DateEnd as [To], Leave.[State] as [Status], [User].SuperiorID
 	FROM [User], Leave
 	WHERE Leave.UserID = [User].UserID
+GO
+/* Create view leave days detail ************************************************************/
+CREATE VIEW LeaveDaysDetail
+AS
+SELECT [User].UserID, YEAR([Leave].DateStart) AS [Year], Leave.State, SUM(DATEDIFF(dy,DateStart,DateEnd)+1) AS LeaveDays
+	FROM [User] JOIN Leave ON ([User].UserID = Leave.UserID)
+	GROUP BY [User].UserID, YEAR([Leave].DateStart), Leave.State
+	HAVING [Leave].State = 'Approved'
 GO
 /* Create view subordinate detail ***********************************************************/
 CREATE VIEW SubordinateDetail
 AS
-SELECT DISTINCT SuperiorID, [User].UserID AS Code, Fullname AS Name, Position.LeaveDays AS [Total leave Days], (Position.LeaveDays - ISNULL(LeaveDays.LeaveDays,0)) AS [Remaining leave days]
-	FROM [User], Position, 
-		(SELECT [User].UserID, SUM(DATEDIFF(dy,DateStart,DateEnd)+1) AS LeaveDays
-			FROM [User] LEFT JOIN Leave ON ([User].UserID = Leave.UserID)
-			GROUP BY [User].UserID
-		) AS LeaveDays
-	WHERE Position.PositionID = [User].PositionID
+SELECT  SuperiorID, [User].UserID AS Code, Fullname AS Name, Position.LeaveDays AS [Total leave Days], (Position.LeaveDays - ISNULL(LeaveDaysDetail.LeaveDays,0)) AS [Remaining leave days], LeaveDaysDetail.Year
+	FROM ([User] JOIN Position ON (Position.PositionID = [User].PositionID ))
+	LEFT JOIN LeaveDaysDetail ON ([User].UserID = LeaveDaysDetail.UserID)
 GO
 /* Create view log detail *******************************************************************/
 CREATE VIEW LogDetail
@@ -81,12 +85,12 @@ SELECT [Log].UserID, [Log].LeaveID, Time, [User].Username, 'Leave "' + Leave.[Su
 GO
 /*************************************************************************** Create Procedure View **************************************************************************/
 /* Create procedure view submited leave detail application **********************************/
-CREATE PROCEDURE sp_SubmitedLeaves
+CREATE PROCEDURE sp_SubmittedLeaves
 	@SuperiorID INT
 AS
-SELECT * 
+SELECT ID, Requestor, [Date], [Subject], [From], [To], [Status] 
 	FROM LeaveFullDetail
-	WHERE SuperiorID = @SuperiorID AND YEAR(DateStart) LIKE YEAR(GETDATE())
+	WHERE SuperiorID = @SuperiorID AND YEAR([From]) LIKE YEAR(GETDATE())
 GO
 /* Create procedure view leave detail application *******************************************/
 CREATE PROCEDURE sp_LeaveDetail
@@ -110,15 +114,33 @@ SELECT Time, Username, [Action]
 	WHERE LeaveID IN (SELECT LeaveID FROM Leave WHERE UserID = @UserID)
 ORDER BY Time
 GO
-/* Create procedure view subordinate detail *********************************************************/
+/* Create procedure view subordinate detail *************************************************/
 CREATE PROCEDURE sp_SubordinateDetail
+	@SuperiorID INT,
+	@Year INT
+AS
+SELECT Name, [Total leave Days], [Remaining leave days] 
+	FROM SubordinateDetail
+	WHERE SuperiorID = @SuperiorID AND [YEAR] = @Year
+GO
+/* Create procedure view subordinate detail *************************************************/
+CREATE PROCEDURE sp_Subordinate
 	@SuperiorID INT
 AS
-SELECT * 
+SELECT Code ,Name 
 	FROM SubordinateDetail
 	WHERE SuperiorID = @SuperiorID
 GO
-/* Create procedure check if someone is superior *****************************************************************/
+/* Create procedure view total day detail *************************************************/
+CREATE PROCEDURE sp_PersonalDetail
+	@UserID INT,
+	@Year INT
+AS
+SELECT Name, Code, [Total leave Days], [Remaining leave days]
+	FROM SubordinateDetail
+	WHERE Code = @UserID AND [YEAR] = @Year
+GO
+/* Create procedure check if someone is superior ********************************************/
 CREATE PROCEDURE sp_CheckSuperior 
 	@UserID INT
 AS
