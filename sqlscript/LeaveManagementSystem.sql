@@ -122,12 +122,19 @@ AS
 SELECT Name, [Total leave Days], [Remaining leave days] 
 	FROM SubordinateDetail
 	WHERE SuperiorID = @SuperiorID AND [YEAR] = @Year
+UNION
+SELECT Name, [Total leave Days], [Total leave Days] AS [Remaining leave days]
+	FROM SubordinateDetail
+	WHERE SuperiorID = @SuperiorID AND Name NOT IN (SELECT Name 
+		FROM SubordinateDetail
+		WHERE SuperiorID = @SuperiorID AND [YEAR] = @Year
+	)
 GO
 /* Create procedure view subordinate detail *************************************************/
 CREATE PROCEDURE sp_Subordinate
 	@SuperiorID INT
 AS
-SELECT Code ,Name 
+SELECT Code, Name 
 	FROM SubordinateDetail
 	WHERE SuperiorID = @SuperiorID
 GO
@@ -136,9 +143,17 @@ CREATE PROCEDURE sp_PersonalDetail
 	@UserID INT,
 	@Year INT
 AS
-SELECT Name, Code, [Total leave Days], [Remaining leave days]
+IF EXISTS(SELECT Code
 	FROM SubordinateDetail
 	WHERE Code = @UserID AND [YEAR] = @Year
+)
+	SELECT Name, Code, [Total leave Days], [Remaining leave days]
+		FROM SubordinateDetail
+		WHERE Code = @UserID AND [YEAR] = @Year
+ELSE
+	SELECT Name, Code, [Total leave Days], [Total leave Days] AS [Remaining leave days]
+		FROM SubordinateDetail
+		WHERE Code = @UserID
 GO
 /* Create procedure check if someone is superior ********************************************/
 CREATE PROCEDURE sp_CheckSuperior 
@@ -256,3 +271,5 @@ INSERT INTO [User] VALUES('mainq','827ccb0eea8a706c4c34a16891f84e7b','Mai Nguyen
 INSERT INTO [User] VALUES('ngocttm','827ccb0eea8a706c4c34a16891f84e7b','Ngoc Tong Thi Minh',6,1)
 INSERT INTO [User] VALUES('huongctt','827ccb0eea8a706c4c34a16891f84e7b','Huong Cao Thi Thu',7,1)
 INSERT INTO [User] VALUES('diepttm','827ccb0eea8a706c4c34a16891f84e7b','Diep Tran Thi My',7,1)
+
+EXEC sp_SubordinateDetail 2, 2000
