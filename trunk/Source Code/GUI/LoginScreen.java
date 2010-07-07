@@ -115,7 +115,7 @@ public class LoginScreen extends JFrame {
     }
 
     public static void main(String[] avg) {
-      //  new LoginScreen();
-       new MainScreen();
+        new LoginScreen();
+      // new MainScreen();
     }
 }

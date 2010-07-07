@@ -5,15 +5,19 @@
 package GUI;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.UIManager;
+import javax.swing.table.TableCellRenderer;
 
 /**
  *
@@ -42,10 +46,13 @@ public class MainScreen extends JFrame {
     private Font mFont;
     private Color mColor;
     private JLabel lbSpectator;
+    private JLabel lbTable;
+    private JLabel lbViewReport;
+    private JComboBox cbYear;
     //  private JLabel lpanel;
 
     public MainScreen() {
-        System.out.print("dadwa");
+        // System.out.print("dadwa");
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
@@ -83,7 +90,9 @@ public class MainScreen extends JFrame {
         ImageIcon imgLpanel = new ImageIcon(strUrl + "panelLeft.png");
         ImageIcon imgBtApply = new ImageIcon(strUrl + "btn_applyLeave.png");
         ImageIcon imgBtCancel = new ImageIcon(strUrl + "btn_requestCan.png");
+        ImageIcon imgTabel = new ImageIcon(strUrl + "mainTable.png");
 
+        lbViewReport = new JLabel("View Report");
         lbCalendar = new JLabel("Calendar");
         lbChangePass = new JLabel("Change Password");
         lbHelp = new JLabel("Help");
@@ -93,15 +102,29 @@ public class MainScreen extends JFrame {
         lbRemainDay = new JLabel("Remain Leave Day ");
         lbYear = new JLabel("Year ");
         lbUsername = new JLabel("hung");
-        lbUsername.setFont(new Font("tahoma",Font.ITALIC|Font.BOLD,11));
-        lbUsername.setForeground(new Color(0,0,255));
-        table = new JTable();
+        lbUsername.setFont(new Font("tahoma", Font.ITALIC | Font.BOLD, 11));
+        lbUsername.setForeground(new Color(0, 0, 255));
+        cbYear = new JComboBox();
+        table = new JTable() {
+
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component c = super.prepareRenderer(renderer, row, column);
+                // We want renderer component to be transparent so background image is visible
+                if (c instanceof JComponent) {
+                    ((JComponent) c).setOpaque(false);
+                }
+                return c;
+            }
+        };
+        table.setOpaque(false);
 
         topPanel = new JLabel(imgTop);
         botPanel = new JLabel(imgBot);
         lbSpectator = new JLabel(imgSpectator);
         lbApplyLeave = new JLabel(imgBtApply);
         lbRqCancel = new JLabel(imgBtCancel);
+        lbTable = new JLabel(imgTabel);
         // lpanel = new JLabel(imgLpanel);
 
         // lpanel.setBounds(5, 80, imgLpanel.getIconWidth(), imgLpanel.getIconHeight()-50);
@@ -112,44 +135,62 @@ public class MainScreen extends JFrame {
         lbChangePass.setBounds(lbCalendar.getX() + 60, lbCalendar.getY(), 100, 14);
         lbHelp.setBounds(lbChangePass.getX() + 110, lbCalendar.getY(), 50, 14);
         lbLogin.setBounds(3 * MY_WIDTH / 4, lbCalendar.getY(), 100, 14);
-        lbUsername.setBounds(lbLogin.getX()+50, lbCalendar.getY(), 100 , 14);
-        lbSignout.setBounds(MY_WIDTH-50, lbCalendar.getY(), 100, 14);
+        lbUsername.setBounds(lbLogin.getX() + 50, lbCalendar.getY(), 100, 14);
+        lbSignout.setBounds(MY_WIDTH - 50, lbCalendar.getY(), 100, 14);
         lbTotalDay.setBounds(10, 100, 100, 14);
         lbRemainDay.setBounds(lbTotalDay.getX(), lbTotalDay.getY() + 20, 100, 14);
         lbYear.setBounds(lbTotalDay.getX(), lbRemainDay.getY() + 20, 100, 14);
+        cbYear.setBounds(lbYear.getX()+40, lbYear.getY(), 50, 20);
         table.setBounds(MY_WIDTH / 4 + 50, 80, 400, 200);
-        lbApplyLeave.setBounds(table.getX(), table.getY()+ table.getHeight() + 10, imgBtApply.getIconWidth(), imgBtCancel.getIconHeight());
-        lbRqCancel.setBounds(lbApplyLeave.getX() + 90, lbApplyLeave.getY()-30, imgBtCancel.getIconWidth(), imgBtCancel.getIconWidth());
+        lbTable.setBounds(table.getX(), table.getY(), table.getWidth(), table.getHeight());
+        lbApplyLeave.setBounds(table.getX(), table.getY() + table.getHeight() + 10, imgBtApply.getIconWidth(), imgBtCancel.getIconHeight());
+        lbRqCancel.setBounds(lbApplyLeave.getX() + 90, lbApplyLeave.getY() - 30, imgBtCancel.getIconWidth(), imgBtCancel.getIconWidth());
 
         Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
         lbHelp.setCursor(cursor);
         lbCalendar.setCursor(cursor);
         lbChangePass.setCursor(cursor);
         lbSignout.setCursor(cursor);
+        lbApplyLeave.setCursor(cursor);
+        lbRqCancel.setCursor(cursor);
 
+        //top and bot panel
         add(topPanel);
         add(botPanel);
+        //table and table background
         add(table);
+        add(lbTable);
         //add(lpanel);
+
+        //add top function
         add(lbSpectator);
         add(lbCalendar);
-        add(lbApplyLeave);
-        add(lbChangePass);
         add(lbHelp);
         add(lbLogin);
-        add(lbRemainDay);
-        add(lbRqCancel);
         add(lbSignout);
-        add(lbSpectator);
-        add(lbTotalDay);
+        add(lbChangePass);
         add(lbUsername);
-        // add(lbWithdraw);
+
+        // add left panel
+        add(lbRemainDay);
+        add(lbTotalDay);
+        add(cbYear);
+     
         add(lbYear);
+
+        //add buttons
+        add(lbApplyLeave);
+        add(lbRqCancel);
+           // add(lbWithdraw);
+
         setFontAndColor(mFont, mColor);
 
     }
 
     private void setFontAndColor(Font f, Color c) {
+
+        lbViewReport.setFont(f);
+        lbViewReport.setForeground(c);
         lbCalendar.setFont(f);
         lbCalendar.setForeground(c);
 
