@@ -54,7 +54,7 @@ public class DataAccess {
     }
 
     // view leave detail according to userID and year
-    public RowSet viewLeaveDetails(int userID, int year){
+    public RowSet viewLeaveDetail(int userID, int year){
         return db.query("EXEC sp_LeaveDetail " + userID + ", " + year);
     }
 
