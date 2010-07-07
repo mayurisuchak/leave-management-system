@@ -163,6 +163,15 @@ SELECT COUNT(Code)
 	FROM SubordinateDetail
 	WHERE SuperiorID = @UserID
 GO
+/* Create procedure check login authentication ********************************************/
+CREATE PROCEDURE sp_CheckLogin
+	@Username VARCHAR(30),
+	@Password VARCHAR(50)
+AS
+SELECT UserID
+	FROM [User]
+	WHERE Username = @Username AND [Password] = @Password
+GO
 /*************************************************************************** Create Procedure Modify **************************************************************************/
 /* Create procedure change password *********************************************************/
 CREATE PROCEDURE sp_ChangePassword 

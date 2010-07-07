@@ -154,6 +154,20 @@ public class DataAccess {
         }
     }
 
+     // check login authentication
+    public int checkLogin(String username, String password){
+        try {
+            RowSet rs = db.query("EXEC sp_CheckLogin " + username + "," + password);
+            if(rs.next())
+                return rs.getInt(1);
+            else
+                return -1;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return -1;
+        }
+    }
+
     public void close(){
         db.close();
     }
