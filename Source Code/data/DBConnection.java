@@ -57,7 +57,40 @@ public class DBConnection {
         }
     }
 
-    public int query(String prepareSQL, AbstractList<Object> params){
+    public RowSet complexQuery(String prepareSQL, AbstractList<Object> params){
+        try {
+            Connection conn = cp.getConnection();
+            PreparedStatement preStm = conn.prepareStatement(prepareSQL);
+            int paramsCount = params.size();
+            for(int i = 0; i < paramsCount; i++)
+            {
+                String type = params.get(i).getClass().toString();
+                if(type.indexOf("String") > -1)
+                    preStm.setString(i+1, (String)params.get(i));
+                else if(type.indexOf("Double") > -1)
+                    preStm.setFloat(i+1, (Float)params.get(i));
+                else if(type.indexOf("Integer") > -1)
+                    preStm.setInt(i+1, (Integer)params.get(i));
+                else if(type.indexOf("Date") > -1)
+                {
+                    java.util.Date date = (java.util.Date)params.get(i);
+                    preStm.setDate(i+1, new Date(date.getTime()));
+                }
+                else if(type.indexOf("Boolean") > -1)
+                    preStm.setBoolean(i+1, (Boolean)params.get(i));
+
+            }
+            crs.populate(preStm.executeQuery());
+            preStm.close();
+            conn.close();
+            return crs;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public int queryUpdate(String prepareSQL, AbstractList<Object> params){
         try {
             Connection conn = cp.getConnection();
             PreparedStatement preStm = conn.prepareStatement(prepareSQL);

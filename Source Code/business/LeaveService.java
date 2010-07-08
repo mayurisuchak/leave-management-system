@@ -6,10 +6,16 @@
 package business;
 
 import data.DataAccess;
+import data.DataObject;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sql.RowSet;
 
 /**
  *
@@ -75,5 +81,60 @@ public class LeaveService {
     // get join year of userID
     public int viewJoinYear(int userID){
         return da.viewJoinYear(userID);
+    }
+
+    // view detail of leave
+    public ArrayList<String> viewDetailOfLeave(int leaveID){
+            ArrayList<String> arrayList = new ArrayList<String>();
+            RowSet rs = da.viewDetailOfLeave(leaveID);
+        try {
+            if (rs.next()) {
+                arrayList.add(rs.getString(1));
+                arrayList.add(rs.getString(2));
+                arrayList.add(rs.getString(3));
+                arrayList.add(rs.getString(4));
+                arrayList.add(rs.getString(5));
+                arrayList.add(rs.getString(6));
+            }else{
+                for(int i = 0; i < 6; i++)
+                    arrayList.add("null");
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+
+            return arrayList;
+        }
+    }
+
+    // get newly leave
+    public int getNewlyLeave(int userID){
+        try {
+            RowSet rs = da.getNewlyLeave(userID);
+            if (rs.next()) {
+                return rs.getInt(1);
+            }else{
+                return -1;
+            }
+
+        } catch (SQLException ex) {
+            return -1;
+        }
+
+    }
+
+    // check leave whether aprroved or not approved
+    public int checkApprove(int leaveID){
+        return da.checkApprove(leaveID);
+    }
+
+    // check leave whether not aprroved or canceling
+    public int checkRequest(int leaveID){
+        return da.checkRequest(leaveID);
+    }
+
+
+    public DataObject viewLeaves(int userID, int year){
+        return new DataObject(da.viewLeaveDetail(userID, year));
     }
 }
