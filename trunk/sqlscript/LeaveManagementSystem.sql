@@ -74,7 +74,7 @@ GO
 /* Create view subordinate detail ***********************************************************/
 CREATE VIEW SubordinateDetail
 AS
-SELECT  SuperiorID, [User].UserID AS Code, Fullname AS Name, Position.LeaveDays AS [Total leave Days], (Position.LeaveDays - ISNULL(LeaveDaysDetail.LeaveDays,0)) AS [Remaining leave days], LeaveDaysDetail.Year
+SELECT  SuperiorID, [User].UserID AS Code, Fullname AS Name, Position.PositionName, Position.LeaveDays AS [Total leave Days], (Position.LeaveDays - ISNULL(LeaveDaysDetail.LeaveDays,0)) AS [Remaining leave days], LeaveDaysDetail.Year
 	FROM ([User] JOIN Position ON (Position.PositionID = [User].PositionID ))
 	LEFT JOIN LeaveDaysDetail ON ([User].UserID = LeaveDaysDetail.UserID)
 GO
@@ -85,15 +85,24 @@ SELECT [Log].UserID, [Log].LeaveID, Time, [User].Username, 'Leave "' + Leave.[Su
 	FROM [Log] INNER JOIN [User] ON ([Log].UserID = [User].UserID) LEFT JOIN Leave ON ([Log].LeaveID = Leave.LeaveID)
 GO
 /*************************************************************************** Create Procedure View **************************************************************************/
+/* Create procedure view detail of a leave ***************************************************/
+CREATE PROCEDURE sp_DetailOfLeave
+	@LeaveID INT
+AS
+SELECT [Subject], [Reason], DateStart, DateEnd, Communication, [State] as [Status]
+	FROM Leave
+	WHERE LeaveID = @LeaveID
+GO
 /* Create procedure view submited leave detail application **********************************/
 CREATE PROCEDURE sp_SubmittedLeaves
-	@SuperiorID INT
+	@SuperiorID INT,
+	@Year INT
 AS
 SELECT ID, Requestor, [Date], [Subject], [From], [To], [Status]
 	FROM LeaveFullDetail
-	WHERE SuperiorID = @SuperiorID AND YEAR([From]) LIKE YEAR(GETDATE()) AND ([Status] = 'Not Approved' OR [Status] = 'Canceling')
+	WHERE SuperiorID = @SuperiorID AND YEAR([From]) LIKE @Year AND ([Status] = 'Not Approved' OR [Status] = 'Canceling')
 GO
-/* Create procedure view leave detail application *******************************************/
+/* Create procedure view list of leave detail application **********************************/
 CREATE PROCEDURE sp_LeaveDetail
 	@UserID INT,
 	@Year INT
@@ -115,6 +124,21 @@ SELECT Time, Username, [Action]
 	WHERE LeaveID IN (SELECT LeaveID FROM Leave WHERE UserID = @UserID)
 ORDER BY Time
 GO
+/* Create procedure view log detail ********************************************************/
+CREATE PROCEDURE sp_LogDetailDuration
+	@UserID INT,
+	@DateStart DATETIME,
+	@DateEnd DATETIME
+AS
+SELECT [Time], Username, [Action]
+	FROM LogDetail
+	WHERE UserID = @UserID AND DATEDIFF(day, @DateStart, [Time]) > 0 AND DATEDIFF(day, [Time], @DateEnd) > 0
+UNION
+SELECT Time, Username, [Action]
+	FROM LogDetail
+	WHERE LeaveID IN (SELECT LeaveID FROM Leave WHERE UserID = @UserID) AND DATEDIFF(day, @DateStart, [Time]) > 0 AND DATEDIFF(day, [Time], @DateEnd) > 0
+ORDER BY Time
+GO
 /* Create procedure view subordinate detail *************************************************/
 CREATE PROCEDURE sp_SubordinateDetail
 	@SuperiorID INT,
@@ -131,11 +155,11 @@ SELECT Name, [Total leave Days], [Total leave Days] AS [Remaining leave days]
 		WHERE SuperiorID = @SuperiorID AND [YEAR] = @Year
 	)
 GO
-/* Create procedure view subordinate detail *************************************************/
+/* Create procedure view list of subordinate ***********************************************/
 CREATE PROCEDURE sp_Subordinate
 	@SuperiorID INT
 AS
-SELECT Code, Name 
+SELECT Code, Name, PositionName AS Position
 	FROM SubordinateDetail
 	WHERE SuperiorID = @SuperiorID
 GO
@@ -180,6 +204,23 @@ AS
 SELECT UserID
 	FROM [User]
 	WHERE Username = @Username AND [Password] = @Password
+GO
+/* Create procedure get leaveID newly add by user **********************************************************/
+CREATE PROCEDURE sp_GetNewlyLeave
+	@UserID INT
+AS
+SELECT TOP 1 LeaveID
+	FROM Leave
+	WHERE UserID = 5
+	ORDER BY [Date] DESC
+GO
+/* Create procedure get leave status **********************************************************/
+CREATE PROCEDURE sp_GetLeaveStatus
+	@LeaveID INT
+AS
+SELECT [State]
+	FROM Leave
+	WHERE LeaveID = @LeaveID
 GO
 /*************************************************************************** Create Procedure Modify **************************************************************************/
 /* Create procedure change password *********************************************************/

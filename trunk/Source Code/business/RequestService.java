@@ -6,18 +6,44 @@
 package business;
 
 import data.DataAccess;
+import data.DataObject;
+import java.util.Calendar;
+import javax.sql.RowSet;
 
 /**
  *
  * @author uSeR
  */
 public class RequestService {
+    private DataAccess da;
 
     public RequestService() {
+        da = DataAccess.getInstance();
     }
 
+    // check whether userid is a superior
     public boolean checkSuperior(int userID){
-        DataAccess da = DataAccess.getInstance();
         return da.checkSuperior(userID);
+    }
+
+    // view leaves submitted to superior
+    public DataObject viewSubmittedLeave(int superiorID){
+        Calendar calendar = Calendar.getInstance();
+        int currentYear = calendar.get(Calendar.YEAR);
+        RowSet rs = da.viewSubmittedLeave(superiorID, currentYear);
+        return new DataObject(rs);
+    }
+
+    // view approve/reject leave/request from userID
+    public boolean updateLeaveStatus(int leaveID, Boolean allowance ){
+        if(da.updateLeaveState(leaveID, allowance)>0)
+            return true;
+        else
+            return false;
+    }
+
+    // view list of subordinate
+    public RowSet viewSubordinateList(int superiorID){
+        return da.viewSubordinateList(superiorID);
     }
 }

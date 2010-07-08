@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sql.RowSet;
 
 /**
@@ -18,14 +20,7 @@ import javax.sql.RowSet;
  * @author uSeR
  */
 public class DataAccess {
-    public static final String LOG_ACTION_LEAVE_APPLICATION = "apply leave";
-    public static final String LOG_ACTION_CANCELATION_REQUEST = "request cancellation";
-    public static final String LOG_ACTION_WITHDRAWAL = "withdraw leave";
-    public static final String LOG_ACTION_LEAVE_APPROVAL = "approve leave";
-    public static final String LOG_ACTION_LEAVE_REJECTION = "reject leave";
-    public static final String LOG_ACTION_CANCEL_APPROVAL = "approve cancellation";
-    public static final String LOG_ACTION_CANCEL_REJECTION = "reject cancellation";
-    public static final String LOG_ACTION_PASSWORD_CHANGE = "change password";
+    
     private static DataAccess dataAccess = new DataAccess();
 
     private DBConnection db;
@@ -64,8 +59,8 @@ public class DataAccess {
     }
 
     // view leave submitted to superiorID
-    public RowSet viewSubmittedLeave(int superiorID){
-        return db.query("EXEC sp_SubmitedLeaves " + superiorID);
+    public RowSet viewSubmittedLeave(int superiorID, int year){
+        return db.query("EXEC sp_SubmitedLeaves " + superiorID + "," + year);
     }
 
     // view report of subordinate in year
@@ -83,9 +78,23 @@ public class DataAccess {
         return db.query("EXEC sp_PersonalDetail " + userID + "," + year);
     }
 
+     // view detail of a leave
+    public RowSet viewDetailOfLeave(int leaveID){
+        return db.query("EXEC sp_DetailOfLeave " + leaveID);
+    }
+
     // view log detail of an employee with id: userID
     public RowSet viewLogDetail(int userID){
-        return db.query("EXEC sp_SubordinateDetail " + userID);
+        return db.query("EXEC sp_LogDetail " + userID);
+    }
+
+    // view log detail of an employee form date to date
+    public RowSet viewLogDetail(int userID, Date dateStart, Date dateEnd ){
+        ArrayList<Object> paramList = new ArrayList<Object>();
+        paramList.add(userID);
+        paramList.add(dateStart);
+        paramList.add(dateEnd);
+        return db.complexQuery("EXEC sp_LogDetailDuration ?,?,? ", paramList );
     }
 
     // update password of userID with new password: pass
@@ -94,7 +103,7 @@ public class DataAccess {
         paramList.add(userID);
         paramList.add(newpass);
         paramList.add(oldpass);
-        return db.query("EXEC sp_ChangePassword ?, ?, ?", paramList);
+        return db.queryUpdate("EXEC sp_ChangePassword ?, ?, ?", paramList);
     }
 
     // create new log with leaveID
@@ -104,7 +113,7 @@ public class DataAccess {
         paramList.add(new Date());  // Time field
         paramList.add(action);      // Action field
         paramList.add(leaveID);     // LeaveID field
-        return db.query("EXEC sp_CreateLog ?,?,?,?", paramList);
+        return db.queryUpdate("EXEC sp_CreateLog ?,?,?,?", paramList);
     }
 
     // create new log with leavID = null
@@ -113,7 +122,7 @@ public class DataAccess {
         paramList.add(userID);      // UserID field
         paramList.add(new Date());  // Time field
         paramList.add(action);      // Action field
-        return db.query("EXEC sp_CreateLog ?,?,?", paramList);
+        return db.queryUpdate("EXEC sp_CreateLog ?,?,?", paramList);
     }
 
     // create new leave
@@ -126,14 +135,14 @@ public class DataAccess {
         paramList.add(communication);   // Communication field
         paramList.add(new Date());      // Date field
         paramList.add(subject);         // Subject field
-        return db.query("EXEC sp_ApplyLeave ?,?,?,?,?,?,?", paramList);
+        return db.queryUpdate("EXEC sp_ApplyLeave ?,?,?,?,?,?,?", paramList);
     }
 
     // withdraw a not-approved leave or request cancellation of a approved leave
     public int removeLeave(int leaveID){
         ArrayList<Object> paramList = new ArrayList<Object>();
         paramList.add(leaveID);
-        return db.query("EXEC sp_CancelLeave ?",paramList);
+        return db.queryUpdate("EXEC sp_CancelLeave ?",paramList);
     }
 
     // approve/reject leave/request (allowance = true: approve, allowance = false: rejected, )
@@ -141,7 +150,7 @@ public class DataAccess {
         ArrayList<Object> paramList = new ArrayList<Object>();
         paramList.add(leaveID);
         paramList.add(allowance);
-        return db.query("EXEC sp_ManageRequest ?,?",paramList);
+        return db.queryUpdate("EXEC sp_ManageRequest ?,?",paramList);
     }
 
     // check userid is whether a superior or not
@@ -163,7 +172,7 @@ public class DataAccess {
      // check login authentication
     public int checkLogin(String username, String password){
         try {
-            RowSet rs = db.query("EXEC sp_CheckLogin " + username + "," + password);
+            RowSet rs = db.query("EXEC sp_CheckLogin '" + username + "','" + password + "'");
             if(rs.next())
                 return rs.getInt(1);
             else
@@ -188,6 +197,65 @@ public class DataAccess {
             return -1;
         }
     }
+
+    // get newly leaveID
+    public RowSet getNewlyLeave(int userID){
+        RowSet rs = db.query("EXEC sp_GetNewlyLeave " + userID);
+        return rs;
+    }
+
+    // get leave status
+    private RowSet getLeaveStatus(int leaveID){
+        RowSet rs = db.query("EXEC sp_GetLeaveStatus " + leaveID);
+        return rs;
+    }
+
+    // check if leave is approve or not
+    public int checkApprove(int leaveID){
+        try {
+            RowSet rs = getLeaveStatus(leaveID);
+            if (rs.next()) {
+                String status = rs.getString(1);
+                if (status.compareTo("Approved") == 0) {
+                    return -1;
+                } else if (status.compareTo("Not Approved") == 0) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            } else {
+                return 0;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return 0;
+        }
+
+    }
+
+     // check if satus is 'Not Approved' or 'Canceling'
+    public int checkRequest(int leaveID){
+        try {
+            RowSet rs = getLeaveStatus(leaveID);
+            if (rs.next()) {
+                String status = rs.getString(1);
+                if (status.compareTo("Not Approved") == 0) {
+                    return 1;
+                } else if (status.compareTo("Canceling") == 0) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            } else {
+                return 0;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return 0;
+        }
+
+    }
+
 
     public void close(){
         db.close();

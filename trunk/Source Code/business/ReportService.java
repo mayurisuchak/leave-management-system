@@ -5,10 +5,21 @@
 
 package business;
 
+import data.DataAccess;
+import data.DataObject;
+
 /**
  *
  * @author uSeR
  */
 public class ReportService {
+    DataAccess da;
+    public ReportService() {
+        da = DataAccess.getInstance();
+    }
 
+    // view report about subordinate according to year
+    public DataObject viewReport(int userID, int year){
+        return new DataObject(da.viewSubordinateReport(userID, year));
+    }
 }
