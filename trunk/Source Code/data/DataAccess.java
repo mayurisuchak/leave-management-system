@@ -26,24 +26,25 @@ public class DataAccess {
     public static final String LOG_ACTION_CANCEL_APPROVAL = "approve cancellation";
     public static final String LOG_ACTION_CANCEL_REJECTION = "reject cancellation";
     public static final String LOG_ACTION_PASSWORD_CHANGE = "change password";
+    private static DataAccess dataAccess = new DataAccess();
 
     private DBConnection db;
 
-    public DataAccess(String propertiesFile) {
-        try {
-            Properties prop = new Properties();
-            prop.load(new FileInputStream(propertiesFile));
-            db = new DBConnection(prop);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
+//    private DataAccess(String propertiesFile) {
+//        try {
+//            Properties prop = new Properties();
+//            prop.load(new FileInputStream(propertiesFile));
+//            db = new DBConnection(prop);
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//        }
+//    }
+//
+//    private DataAccess(Properties properties) {
+//        db = new DBConnection(properties);
+//    }
 
-    public DataAccess(Properties properties) {
-        db = new DBConnection(properties);
-    }
-
-    public DataAccess(){
+    private DataAccess(){
         try {
             Properties prop = new Properties();
             prop.load(new FileInputStream("properties.prop"));
@@ -51,6 +52,10 @@ public class DataAccess {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    public static DataAccess getInstance(){
+        return dataAccess;
     }
 
     // view leave detail according to userID and year
@@ -84,11 +89,12 @@ public class DataAccess {
     }
 
     // update password of userID with new password: pass
-    public int updatePassword(int userID, String pass){
+    public int updatePassword(int userID, String oldpass, String newpass){
         ArrayList<Object> paramList = new ArrayList<Object>();
         paramList.add(userID);
-        paramList.add(pass);
-        return db.query("EXEC sp_ChangePassword ?, ?", paramList);
+        paramList.add(newpass);
+        paramList.add(oldpass);
+        return db.query("EXEC sp_ChangePassword ?, ?, ?", paramList);
     }
 
     // create new log with leaveID
@@ -162,6 +168,21 @@ public class DataAccess {
                 return rs.getInt(1);
             else
                 return -1;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return -1;
+        }
+    }
+
+    // get join year of userid
+    public int viewJoinYear(int userID){
+        try {
+            RowSet rs = db.query("EXEC sp_JoinYear " + userID);
+            if (rs.next()) {
+                return rs.getInt(1);
+            } else {
+                return -1;
+            }
         } catch (SQLException ex) {
             ex.printStackTrace();
             return -1;
