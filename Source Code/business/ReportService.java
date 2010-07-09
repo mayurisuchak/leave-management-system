@@ -12,7 +12,7 @@ import data.DataObject;
  *
  * @author uSeR
  */
-public class ReportService {
+class ReportService {
     DataAccess da;
     public ReportService() {
         da = DataAccess.getInstance();
