@@ -14,7 +14,7 @@ import javax.sql.RowSet;
  *
  * @author uSeR
  */
-public class RequestService {
+class RequestService {
     private DataAccess da;
 
     public RequestService() {
