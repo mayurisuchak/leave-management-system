@@ -13,7 +13,7 @@ import java.util.Date;
  *
  * @author uSeR
  */
-public class LogService {
+class LogService {
     public static final String LOG_ACTION_LEAVE_APPLICATION = "apply leave";
     public static final String LOG_ACTION_CANCELATION_REQUEST = "request cancellation";
     public static final String LOG_ACTION_WITHDRAWAL = "withdraw leave";
