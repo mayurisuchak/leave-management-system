@@ -21,7 +21,7 @@ import snaq.db.ConnectionPool;
  *
  * @author uSeR
  */
-public class DBConnection {
+public class DBConnection extends Thread {
     private ConnectionPool cp;
     private CachedRowSet crs;
 
@@ -143,6 +143,10 @@ public class DBConnection {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+    }
+
+    public void run() {
+
     }
 
 }
