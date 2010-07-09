@@ -157,7 +157,7 @@ public class DataAccess {
     public boolean checkSuperior(int userID){
         try {
             RowSet rs = db.query("EXEC sp_CheckSuperior " + userID);
-            rs.next();
+            rs.first();
             if (rs.getInt(1) > 0) {
                 return true;
             } else {
@@ -173,7 +173,7 @@ public class DataAccess {
     public int checkLogin(String username, String password){
         try {
             RowSet rs = db.query("EXEC sp_CheckLogin '" + username + "','" + password + "'");
-            if(rs.next())
+            if(rs.first())
                 return rs.getInt(1);
             else
                 return -1;
@@ -187,7 +187,7 @@ public class DataAccess {
     public int viewJoinYear(int userID){
         try {
             RowSet rs = db.query("EXEC sp_JoinYear " + userID);
-            if (rs.next()) {
+            if (rs.first()) {
                 return rs.getInt(1);
             } else {
                 return -1;
@@ -214,7 +214,7 @@ public class DataAccess {
     public int checkApprove(int leaveID){
         try {
             RowSet rs = getLeaveStatus(leaveID);
-            if (rs.next()) {
+            if (rs.first()) {
                 String status = rs.getString(1);
                 if (status.compareTo("Approved") == 0) {
                     return -1;
@@ -237,7 +237,7 @@ public class DataAccess {
     public int checkRequest(int leaveID){
         try {
             RowSet rs = getLeaveStatus(leaveID);
-            if (rs.next()) {
+            if (rs.first()) {
                 String status = rs.getString(1);
                 if (status.compareTo("Not Approved") == 0) {
                     return 1;
