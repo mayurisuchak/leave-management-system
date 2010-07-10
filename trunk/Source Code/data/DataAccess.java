@@ -169,16 +169,20 @@ public class DataAccess {
 
      // check login authentication if ok return 1
     public int checkLogin(String username, String password){
+        int tmp = -1;
         try {
             RowSet rs = db.query("EXEC sp_CheckLogin '" + username + "','" + password + "'");
             if(rs.first())
-                return rs.getInt(1);
+                tmp = rs.getInt(1);
             else
-                return -1;
+                tmp = -1;
         } catch (SQLException ex) {
             ex.printStackTrace();
-            return -1;
+            tmp = -1;
+        } finally{
+            return tmp;
         }
+
     }
 
     // get join year of userid, if ok return join year
