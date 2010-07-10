@@ -124,16 +124,19 @@ class LeaveService {
      * get newly leave, if ok return leaveID
      */
     public int getNewlyLeave(int userID){
+        int tmp = -1;
         try {
             RowSet rs = da.getNewlyLeave(userID);
             if (rs.first()) {
-                return rs.getInt(1);
+                tmp = rs.getInt(1);
             }else{
-                return -1;
+                tmp = -1;
             }
 
         } catch (SQLException ex) {
-            return -1;
+            tmp = -1;
+        } finally {
+            return tmp;
         }
 
     }
