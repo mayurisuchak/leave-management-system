@@ -142,17 +142,17 @@ class LeaveService {
     }
 
     /*
-     * check leave whether aprroved or not approved: approved -> -1 || not approved -> 1
+     * check leave whether withdrawed or canceling: withdraw -> -1 || canceling -> 1
      */
-    public int checkApprove(int leaveID){
-        return da.checkApprove(leaveID);
+    public int checkRemoveLeave(int leaveID){
+        return da.checkRemoveLeave(leaveID);
     }
 
     /**
-     * check leave whether not aprroved or canceling: Not Approved -> 1 || Canceling -> -1
+     * check if status and return: <P> -1 : Approved <P> -2 : Rejected <P> 1 : Canceled <P> 2: Cancel-Rejected
      */
-    public int checkRequest(int leaveID){
-        return da.checkRequest(leaveID);
+    public int checkUpdateLeaveStatus(int leaveID){
+        return da.checkUpdateLeaveStatus(leaveID);
     }
 
 
