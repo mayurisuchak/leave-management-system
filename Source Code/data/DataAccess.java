@@ -11,8 +11,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.sql.RowSet;
 
 /**
@@ -97,7 +95,7 @@ public class DataAccess {
         return db.complexQuery("EXEC sp_LogDetailDuration ?,?,? ", paramList );
     }
 
-    // update password of userID with new password: pass
+    // update password of userID with new password: pass, if ok return 1
     public int updatePassword(int userID, String oldpass, String newpass){
         ArrayList<Object> paramList = new ArrayList<Object>();
         paramList.add(userID);
@@ -106,7 +104,7 @@ public class DataAccess {
         return db.queryUpdate("EXEC sp_ChangePassword ?, ?, ?", paramList);
     }
 
-    // create new log with leaveID
+    // create new log with leaveID, if ok return 1
     public int createLog(int userID, String action, int leaveID){
         ArrayList<Object> paramList = new ArrayList<Object>();
         paramList.add(userID);      // UserID field
@@ -116,7 +114,7 @@ public class DataAccess {
         return db.queryUpdate("EXEC sp_CreateLog ?,?,?,?", paramList);
     }
 
-    // create new log with leavID = null
+    // create new log with leavID = null, if ok return 1
     public int createLog(int userID, String action){
         ArrayList<Object> paramList = new ArrayList<Object>();
         paramList.add(userID);      // UserID field
@@ -125,7 +123,7 @@ public class DataAccess {
         return db.queryUpdate("EXEC sp_CreateLog ?,?,?", paramList);
     }
 
-    // create new leave
+    // create new leave, if ok return 1
     public int createNewLeave(int userID, Date dateStart, Date dateEnd, String reason, String communication, String subject){
         ArrayList<Object> paramList = new ArrayList<Object>();
         paramList.add(userID);          // UserID field
@@ -138,14 +136,14 @@ public class DataAccess {
         return db.queryUpdate("EXEC sp_ApplyLeave ?,?,?,?,?,?,?", paramList);
     }
 
-    // withdraw a not-approved leave or request cancellation of a approved leave
+    // withdraw a not-approved leave or request cancellation of a approved leave, if ok return 1
     public int removeLeave(int leaveID){
         ArrayList<Object> paramList = new ArrayList<Object>();
         paramList.add(leaveID);
         return db.queryUpdate("EXEC sp_CancelLeave ?",paramList);
     }
 
-    // approve/reject leave/request (allowance = true: approve, allowance = false: rejected, )
+    // approve/reject leave/request (allowance = true: approve, allowance = false: rejected ), if ok return 1
     public int updateLeaveState(int leaveID, Boolean allowance){
         ArrayList<Object> paramList = new ArrayList<Object>();
         paramList.add(leaveID);
@@ -153,7 +151,7 @@ public class DataAccess {
         return db.queryUpdate("EXEC sp_ManageRequest ?,?",paramList);
     }
 
-    // check userid is whether a superior or not
+    // check userid is whether a superior or not, if ok return 1
     public boolean checkSuperior(int userID){
         try {
             RowSet rs = db.query("EXEC sp_CheckSuperior " + userID);
@@ -169,7 +167,7 @@ public class DataAccess {
         }
     }
 
-     // check login authentication
+     // check login authentication if ok return 1
     public int checkLogin(String username, String password){
         try {
             RowSet rs = db.query("EXEC sp_CheckLogin '" + username + "','" + password + "'");
@@ -183,7 +181,7 @@ public class DataAccess {
         }
     }
 
-    // get join year of userid
+    // get join year of userid, if ok return join year
     public int viewJoinYear(int userID){
         try {
             RowSet rs = db.query("EXEC sp_JoinYear " + userID);
@@ -210,7 +208,7 @@ public class DataAccess {
         return rs;
     }
 
-    // check if leave is approve or not
+    // check if leave is approve or not: approved -> -1 || not approved -> 1
     public int checkApprove(int leaveID){
         try {
             RowSet rs = getLeaveStatus(leaveID);
@@ -233,7 +231,7 @@ public class DataAccess {
 
     }
 
-     // check if satus is 'Not Approved' or 'Canceling'
+     // check if satus is 'Not Approved' or 'Canceling': Not Approved -> 1 || Canceling -> -1
     public int checkRequest(int leaveID){
         try {
             RowSet rs = getLeaveStatus(leaveID);

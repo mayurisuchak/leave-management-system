@@ -28,23 +28,35 @@ class LogService {
         da = DataAccess.getInstance();
     }
 
-    // view log detail all
+    /**
+     * view all log details of userid
+     */
     public DataObject viewLogDetailAll(int userID){
         return new DataObject( da.viewLogDetail(userID));
     }
 
-    // view log detail from time to time
+    /**
+     * view log detail from time to time of userid
+     */
     public DataObject viewLogDetail(int userID, Date dateStart, Date dateEnd){
         return new DataObject( da.viewLogDetail(userID,dateStart,dateEnd));
     }
 
-    // create log
+    /**
+     * create log, if ok return true. Remark: action is one of constant String LOG_ACTION_XXX
+     * @param action: constant LOG_ACTION_*
+     */
     public boolean createLog(int userID, String action){
         if(da.createLog(userID, action)>0)
             return true;
         else
             return false;
     }
+
+    /**
+     * create log, if ok return true. <P>Remark: 1. Action is one of constant String LOG_ACTION_XXX. <p>2. Log with actions relative to a leave.
+     * @param action: constant LOG_ACTION_*
+     */
     public boolean createLog(int userID, String action, int leaveID){
         if(da.createLog(userID, action, leaveID)>0)
             return true;
