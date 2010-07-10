@@ -1,5 +1,6 @@
 /* Create database **************************************************************************/
 USE master
+if db_id('LeaveManagementSystem') is not null
 DROP DATABASE LeaveManagementSystem 
 CREATE DATABASE LeaveManagementSystem
 GO
@@ -81,7 +82,7 @@ GO
 /* Create view log detail *******************************************************************/
 CREATE VIEW LogDetail
 AS
-SELECT [Log].UserID, [Log].LeaveID, Time, [User].Username, 'Leave "' + Leave.[Subject] + '": ' + [Log].[Action] as [Action]
+SELECT [Log].UserID, [Log].LeaveID, Time, [User].Username,  + ISNULL('Leave "' + Leave.[Subject] + '": ','') +  + [Log].[Action] as [Action]
 	FROM [Log] INNER JOIN [User] ON ([Log].UserID = [User].UserID) LEFT JOIN Leave ON ([Log].LeaveID = Leave.LeaveID)
 GO
 /*************************************************************************** Create Procedure View **************************************************************************/
@@ -211,7 +212,7 @@ CREATE PROCEDURE sp_GetNewlyLeave
 AS
 SELECT TOP 1 LeaveID
 	FROM Leave
-	WHERE UserID = 1
+	WHERE UserID = @UserID
 	ORDER BY [Date] DESC
 GO
 /* Create procedure get leave status **********************************************************/
@@ -356,3 +357,5 @@ USE [LeaveManagementSystem]
 GO
 
 EXEC sp_addrolemember 'db_owner' , 'app' 
+
+
