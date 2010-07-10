@@ -23,7 +23,7 @@ public class DataObject extends AbstractTableModel {
         try {
             this.rs = ((CachedRowSet) rs).createCopy();
         } catch (SQLException ex) {
-            Logger.getLogger(DataObject.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
     }
 
@@ -41,7 +41,6 @@ public class DataObject extends AbstractTableModel {
             ex.printStackTrace();
             count = 0;
         }finally{
-            //sSystem.out.println(count);
             return count;
         }
     }
@@ -60,12 +59,10 @@ public class DataObject extends AbstractTableModel {
         try {
             rs.absolute(rowIndex+1);
             value = rs.getObject(columnIndex+1);
-
         } catch (SQLException ex) {
             ex.printStackTrace();
             value = -1;
         } finally{
-           // System.out.println(value);
             return value;
         }
 
@@ -81,7 +78,6 @@ public class DataObject extends AbstractTableModel {
             ex.printStackTrace();
             colName = "Error";
         }finally{
-            //System.out.println(colName);
             return colName;
         }
     }
