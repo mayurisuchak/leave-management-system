@@ -212,48 +212,58 @@ public class DataAccess {
         return rs;
     }
 
-    // check if leave is approve or not: approved -> -1 || not approved -> 1
-    public int checkApprove(int leaveID){
+    // check leave whether withdrawed or canceling: withdraw -> -1 || canceling -> 1
+    public int checkRemoveLeave(int leaveID){
+        int check = 0;
+        try {
+            RowSet rs = getLeaveStatus(leaveID);
+            if (rs.first()) {
+                String status = rs.getString(1);
+                if (status.compareTo("Withdrawed") == 0) {
+                    check = -1;
+                } else if (status.compareTo("Canceling") == 0) {
+                    check = 1;
+                } else {
+                    check = 0;
+                }
+            } else {
+                check = 0;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            check = 0;
+        }finally{
+            return check;
+        }
+
+    }
+
+     // check if status and return: <P> -1 : Approved <P> -2 : Rejected <P> 1 : Canceled <P> 2: Cancel-Rejected
+    public int checkUpdateLeaveStatus(int leaveID){
+        int check = 0;
         try {
             RowSet rs = getLeaveStatus(leaveID);
             if (rs.first()) {
                 String status = rs.getString(1);
                 if (status.compareTo("Approved") == 0) {
-                    return -1;
-                } else if (status.compareTo("Not Approved") == 0) {
-                    return 1;
-                } else {
-                    return 0;
+                    check = -1;
+                } else if (status.compareTo("Rejected") == 0) {
+                    check = -2;
+                } else if (status.compareTo("Canceled") == 0) {
+                    check = 1;
+                }else if (status.compareTo("Cancel-Rejected") == 0) {
+                    check = 2;
+                }else {
+                    check = 0;
                 }
             } else {
-                return 0;
+                check = 0;
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            return 0;
-        }
-
-    }
-
-     // check if satus is 'Not Approved' or 'Canceling': Not Approved -> 1 || Canceling -> -1
-    public int checkRequest(int leaveID){
-        try {
-            RowSet rs = getLeaveStatus(leaveID);
-            if (rs.first()) {
-                String status = rs.getString(1);
-                if (status.compareTo("Not Approved") == 0) {
-                    return 1;
-                } else if (status.compareTo("Canceling") == 0) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            } else {
-                return 0;
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            return 0;
+            check = 0;
+        } finally{
+            return check;
         }
 
     }

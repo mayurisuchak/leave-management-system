@@ -186,11 +186,11 @@ public class BusinessProcessing {
             @Override
             public void run() {
                 if (leaveService.removeLeave(leaveID)) {
-                    int check = leaveService.checkApprove(leaveID);
-                    if (check == 1) {
+                    int check = leaveService.checkRemoveLeave(leaveID);
+                    if (check == -1) {
                         logService.createLog(userID, LogService.LOG_ACTION_WITHDRAWAL, leaveID);
                     }
-                    if (check == -1) {
+                    if (check == 1) {
                         logService.createLog(userID, LogService.LOG_ACTION_CANCELATION_REQUEST, leaveID);
                     }
                     //refresh table
@@ -353,20 +353,15 @@ public class BusinessProcessing {
             @Override
             public void run() {
                 if (requestService.updateLeaveStatus(leaveID, allowance)) {
-                    int check = leaveService.checkApprove(leaveID);
-                    if (check == 1) {
-                        if (allowance) {
-                            logService.createLog(userID, LogService.LOG_ACTION_LEAVE_APPROVAL, leaveID);
-                        } else {
-                            logService.createLog(userID, LogService.LOG_ACTION_LEAVE_REJECTION, leaveID);
-                        }
-                    }
+                    int check = leaveService.checkUpdateLeaveStatus(leaveID);
                     if (check == -1) {
-                        if (allowance) {
-                            logService.createLog(userID, LogService.LOG_ACTION_CANCEL_APPROVAL, leaveID);
-                        } else {
-                            logService.createLog(userID, LogService.LOG_ACTION_CANCEL_REJECTION, leaveID);
-                        }
+                        logService.createLog(userID, LogService.LOG_ACTION_LEAVE_APPROVAL, leaveID);
+                    } else if(check == -2){
+                        logService.createLog(userID, LogService.LOG_ACTION_LEAVE_REJECTION, leaveID);
+                    }else if (check == 1) {
+                        logService.createLog(userID, LogService.LOG_ACTION_CANCEL_APPROVAL, leaveID);
+                    } else if(check == 2){
+                        logService.createLog(userID, LogService.LOG_ACTION_CANCEL_REJECTION, leaveID);
                     }
                     //guiMan.showMessage("Update successfull!");
                     //guiMan.refreshTable();
