@@ -211,7 +211,7 @@ CREATE PROCEDURE sp_GetNewlyLeave
 AS
 SELECT TOP 1 LeaveID
 	FROM Leave
-	WHERE UserID = 5
+	WHERE UserID = 1
 	ORDER BY [Date] DESC
 GO
 /* Create procedure get leave status **********************************************************/
