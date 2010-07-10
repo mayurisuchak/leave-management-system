@@ -141,14 +141,14 @@ class LeaveService {
     }
 
     
-    // view personal detail
+    // view personal detail : [Total leave Days], [Remaining leave days]
     public Vector<String> viewPersonalDetail(int userID, int year){
         Vector<String> list = new Vector<String>();
         try {
             RowSet rs = da.viewPersonalDetail(userID, year);
             rs.first();
-            list.add(rs.getString(1));
-            list.add(rs.getString(2));
+            list.add(rs.getString(3));
+            list.add(rs.getString(4));
         } catch (SQLException ex) {
             list.add("error");
             list.add("error");
