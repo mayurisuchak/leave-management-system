@@ -15,10 +15,10 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
-import javax.xml.bind.JAXB;
 
 /**
  *
@@ -46,12 +46,13 @@ public class ManagerLeaveScreen extends JFrame {
     private Font mFont;
     private Color mColor;
     private JLabel lbSpectator;
-    private JLabel lbTable;
+  //  private JLabel lbTable;
     private JLabel lbViewReport;
     private JLabel lbSmallSpector;
     private JLabel lbList;
     private JLabel lbFullName;
     private JLabel lbCode;
+     private JScrollPane spTable;
     //  private JLabel lpanel;
 
     public ManagerLeaveScreen() {
@@ -112,7 +113,7 @@ public class ManagerLeaveScreen extends JFrame {
         lbUsername = new JLabel("hung");
         lbUsername.setFont(new Font("tahoma", Font.ITALIC | Font.BOLD, 11));
         lbUsername.setForeground(new Color(0, 0, 255));
-
+         spTable = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         table = new JTable() {
 
             @Override
@@ -132,7 +133,7 @@ public class ManagerLeaveScreen extends JFrame {
         lbSpectator = new JLabel(imgSpectator);
         lbApprove = new JLabel(imgBtApprove);
         lbReject = new JLabel(imgBtReject);
-        lbTable = new JLabel(imgTabel);
+      //  lbTable = new JLabel(imgTabel);
         lbSmallSpector = new JLabel(imgSpectator);
         lbBack = new JLabel(imagBack);
         // lpanel = new JLabel(imgLpanel);
@@ -155,9 +156,9 @@ public class ManagerLeaveScreen extends JFrame {
         lbTotalDay.setBounds(lbViewReport.getX(), lbCode.getY()+20, 100, 14);
         lbRemainDay.setBounds(lbViewReport.getX(), lbTotalDay.getY() + 20, 100, 14);
 
-        table.setBounds(MY_WIDTH / 4 + 50, 80, 400, 200);
-        lbTable.setBounds(table.getX(), table.getY(), table.getWidth(), table.getHeight());
-        lbApprove.setBounds(table.getX(), table.getY() + table.getHeight() + 10, imgBtApprove.getIconWidth(), imgBtApprove.getIconHeight());
+        spTable.setBounds(MY_WIDTH / 4 + 50, 80, 400, 200);
+       // lbTable.setBounds(table.getX(), table.getY(), table.getWidth(), table.getHeight());
+        lbApprove.setBounds(spTable.getX(), spTable.getY() + spTable.getHeight() + 10, imgBtApprove.getIconWidth(), imgBtApprove.getIconHeight());
         lbReject.setBounds(lbApprove.getX() + 90, lbApprove.getY() - 25, imgBtReject.getIconWidth(), imgBtReject.getIconWidth());
         lbBack.setBounds(MY_WIDTH-imagBack.getIconWidth()-10, lbApprove.getY(), imagBack.getIconWidth() , imagBack.getIconHeight());
         Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
@@ -175,8 +176,8 @@ public class ManagerLeaveScreen extends JFrame {
         add(topPanel);
         add(botPanel);
         //table and table background
-        add(table);
-        add(lbTable);
+        add(spTable);
+    //    add(lbTable);
         //add(lpanel);
 
         //add top function

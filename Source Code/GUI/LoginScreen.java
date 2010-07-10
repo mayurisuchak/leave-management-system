@@ -4,9 +4,13 @@
  */
 package GUI;
 
+import data.DataObject;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -84,13 +88,15 @@ public class LoginScreen extends JFrame {
         topPanel.setBounds(0, 0, imgTop.getIconWidth(), imgTop.getIconHeight());
         botPanel.setBounds(0, 335, imgBot.getIconWidth(), imgBot.getIconHeight());
         lbUsername.setBounds(MY_WIDTH / 4, MY_HEIGHT / 3, 100, 13);
-        System.out.print(lbUsername.getY());
+        //System.out.print(lbUsername.getY());
         tfUsername.setBounds(lbUsername.getX() + 100, lbUsername.getY(), 150,20);
         lbPassword.setBounds(lbUsername.getX(), lbUsername.getY() + 30, 100, 13);
         tfPassword.setBounds(lbUsername.getX() + 100, lbUsername.getY() + 30, 150, 20);
         temp.setBounds(5, 50, 100, 13);
         lbSpectator.setBounds(0, 75, imgSpectator.getIconWidth(), imgSpectator.getIconHeight());
         lbLogin.setBounds(lbPassword.getX()+ 50, lbPassword.getY()+20, imgLogin.getIconWidth(), imgLogin.getIconHeight());
+        Cursor cu = new Cursor(Cursor.HAND_CURSOR);
+        lbLogin.setCursor(cu);
 
         lbUsername.setFont(f);
         lbUsername.setForeground(c);
@@ -112,6 +118,20 @@ public class LoginScreen extends JFrame {
         add(tfPassword);
         add(tfUsername);
         add(lbLogin);
+
+        // add action
+        lbLogin.addMouseListener(new MouseAdapter() {
+
+           
+
+            public void mouseReleased(MouseEvent e) {
+                 //System.out.println("dcm");
+               business.BusinessProcessing.getInstance().loginProcess(tfUsername.getText(), tfPassword.getText());
+               
+
+            }
+
+        });
     }
 
     public static void main(String[] avg) {
