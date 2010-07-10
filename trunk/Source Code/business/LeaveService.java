@@ -148,13 +148,6 @@ class LeaveService {
         return da.checkRemoveLeave(leaveID);
     }
 
-    /**
-     * check if status and return: <P> -1 : Approved <P> -2 : Rejected <P> 1 : Canceled <P> 2: Cancel-Rejected
-     */
-    public int checkUpdateLeaveStatus(int leaveID){
-        return da.checkUpdateLeaveStatus(leaveID);
-    }
-
 
     /**
      * view leave history
