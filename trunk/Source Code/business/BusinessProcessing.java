@@ -193,6 +193,29 @@ public class BusinessProcessing {
         }
     }
 
+    // get personal detail
+    public Vector<String> viewPersonalDetail(final int year){
+        final Vector<String> list = new Vector<String>();
+        try {
+            thread = new Thread() {
+
+                @Override
+                public void run() {
+                    list.addAll(leaveService.viewPersonalDetail(userID, year));
+
+                }
+            };
+            thread.start();
+            // pause main thread execution
+            while (thread.isAlive())
+                thread.join(1000);
+            return list;
+        } catch (InterruptedException ex) {
+            return null;
+        }
+
+    }
+
     // view leave history
     public DataObject viewLeaves(final int year){
         thread = new Thread(){

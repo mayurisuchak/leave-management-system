@@ -13,6 +13,9 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sql.RowSet;
 
 /**
@@ -132,7 +135,26 @@ class LeaveService {
     }
 
 
+    // view leave history
     public DataObject viewLeaves(int userID, int year){
         return new DataObject(da.viewLeaveDetail(userID, year));
     }
+
+    
+    // view personal detail
+    public Vector<String> viewPersonalDetail(int userID, int year){
+        Vector<String> list = new Vector<String>();
+        try {
+            RowSet rs = da.viewPersonalDetail(userID, year);
+            rs.first();
+            list.add(rs.getString(1));
+            list.add(rs.getString(2));
+        } catch (SQLException ex) {
+            list.add("error");
+            list.add("error");
+        }finally{
+            return list;
+        }
+    }
+
 }
