@@ -17,6 +17,7 @@ import java.util.Properties;
 import javax.sql.RowSet;
 import javax.sql.rowset.CachedRowSet;
 import snaq.db.ConnectionPool;
+import snaq.db.ConnectionPoolManager;
 
 /**
  *
@@ -28,6 +29,7 @@ public class DBConnection{
 
     public DBConnection(Properties props) {
         try {
+            ConnectionPoolManager.registerGlobalShutdownHook();
             Class.forName(props.getProperty("driverUrl"));
             String name = props.getProperty("name");
             int maxPool = Integer.parseInt(props.getProperty("maxPool"));
