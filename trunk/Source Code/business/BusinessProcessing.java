@@ -214,10 +214,16 @@ public class BusinessProcessing {
                 @Override
                 public void run() {
                     int joinYear = leaveService.viewJoinYear(userID);
-                    Calendar calendar = Calendar.getInstance();
-                    int currentYear = calendar.get(Calendar.YEAR);
-                    for (int i = joinYear; i <= currentYear; i++) {
-                        list.add(Integer.toString(i));
+                    if(joinYear>0)
+                    {
+                        Calendar calendar = Calendar.getInstance();
+                        int currentYear = calendar.get(Calendar.YEAR);
+                        for (int i = joinYear; i <= currentYear; i++) {
+                            list.add(Integer.toString(i));
+                        }
+                    }
+                    else{
+                        list.add("error");
                     }
                 }
             };
