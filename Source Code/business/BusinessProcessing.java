@@ -353,7 +353,7 @@ public class BusinessProcessing {
             @Override
             public void run() {
                 if (requestService.updateLeaveStatus(leaveID, allowance)) {
-                    int check = leaveService.checkUpdateLeaveStatus(leaveID);
+                    int check = requestService.checkUpdateLeaveStatus(leaveID);
                     if (check == -1) {
                         logService.createLog(userID, LogService.LOG_ACTION_LEAVE_APPROVAL, leaveID);
                     } else if(check == -2){
