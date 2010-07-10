@@ -5,6 +5,7 @@
 
 package business;
 
+import GUI.GUIManager;
 import data.DataObject;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Vector;
 
 
 /**
@@ -21,7 +23,7 @@ import java.util.Locale;
 public class BusinessProcessing {
     private static BusinessProcessing businessProcessing = new BusinessProcessing();
     private int userID;
-    private int username;
+    private String username;
     private boolean superior;
     private LeaveService leaveService;
     private LogService logService;
@@ -45,22 +47,27 @@ public class BusinessProcessing {
 
     // login processing
     public void loginProcess(final String username,final String password){
+        this.username = username;
         thread = new Thread(){
             @Override
             public void run (){
+
                 userID = leaveService.loginProcess(username, password);
                 if (getUserID() > -1) {
                     System.out.println("ok");
                     if(requestService.checkSuperior(userID)){
                         superior = true;
+                        GUIManager.showScreenX(GUIManager.Screen.MainAprroverScreen, business.BusinessProcessing.getInstance().viewLeaves(1999));
                     }else{
                         superior = false;
+                         GUIManager.showScreenX(GUIManager.Screen.MainScreen, business.BusinessProcessing.getInstance().viewLeaves(1999));
                     }
                     //guiMan.showLeaveManage();
 
                 }else{
                     System.out.println("fail");
                     // guiMa.showMessage("Cannot login");
+                    GUIManager.showMessageX("Wrong");
                 }
             }
         } ;
@@ -77,7 +84,7 @@ public class BusinessProcessing {
     /**
      * @return the username
      */
-    public int getUsername() {
+    public String getUsername() {
         return username;
     }
 
@@ -161,9 +168,9 @@ public class BusinessProcessing {
     }
 
     // get content in year combo box
-    public String [] getYearList(final int userID){
+    public Vector<String> getYearList(final int userID){
         try {
-            final ArrayList<String> list = new ArrayList<String>();
+            final Vector<String> list = new Vector<String>();
             thread = new Thread() {
 
                 @Override
@@ -180,7 +187,7 @@ public class BusinessProcessing {
             // pause main thread execution
             while (thread.isAlive())
                 thread.join(1000);
-            return (String[]) list.toArray();
+            return list;
         } catch (InterruptedException ex) {
             return null;
         }
