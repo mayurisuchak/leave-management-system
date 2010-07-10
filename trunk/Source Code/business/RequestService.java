@@ -21,12 +21,16 @@ class RequestService {
         da = DataAccess.getInstance();
     }
 
-    // check whether userid is a superior
+    /**
+     * check whether userid is a superior, return true if right
+     */
     public boolean checkSuperior(int userID){
         return da.checkSuperior(userID);
     }
 
-    // view leaves submitted to superior
+    /**
+     * view leaves submitted to superior
+     */
     public DataObject viewSubmittedLeave(int superiorID){
         Calendar calendar = Calendar.getInstance();
         int currentYear = calendar.get(Calendar.YEAR);
@@ -34,7 +38,9 @@ class RequestService {
         return new DataObject(rs);
     }
 
-    // view approve/reject leave/request from userID
+    /**
+     * approve(reject) leave(request) from userID <P> allowance = true to approve , allowance = false to reject
+     */
     public boolean updateLeaveStatus(int leaveID, Boolean allowance ){
         if(da.updateLeaveState(leaveID, allowance)>0)
             return true;
@@ -42,7 +48,9 @@ class RequestService {
             return false;
     }
 
-    // view list of subordinate
+    /**
+     * view list of subordinate
+     */
     public RowSet viewSubordinateList(int superiorID){
         return da.viewSubordinateList(superiorID);
     }

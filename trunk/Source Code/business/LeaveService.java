@@ -14,8 +14,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.sql.RowSet;
 
 /**
@@ -36,7 +34,9 @@ class LeaveService {
             return false;
     }
 
-    // encrypt plain string to md5 string
+ /**
+ * md5 input string and return crypted string
+ */
     private String md5String(String plaintext){
         try {
             // md5 password
@@ -56,14 +56,18 @@ class LeaveService {
         }
     }
 
-    // return userid equivalent to username and password
+    /**
+     * return userid equivalent to username and password
+     */
     public int loginProcess(String username, String password){
         password = md5String(password);
         return da.checkLogin(username, password);
 
     }
 
-    // apply new leave
+    /**
+     * apply new leave, if ok, return true
+     */
     public boolean applyLeave(int userID, Date dateStart,Date dateEnd,String reason, String communication, String subject ){
         if(da.createNewLeave(userID,dateStart,dateEnd,reason,communication,subject)>0)
             return true;
@@ -71,7 +75,11 @@ class LeaveService {
             return false;
     }
 
-    // cancel/withdraw leave
+    /**
+     *
+     * cancel/withdraw leave, if ok, return true
+     *
+     */
     public boolean removeLeave(int leaveID){
         if(da.removeLeave(leaveID)>0)
             return true;
@@ -79,17 +87,21 @@ class LeaveService {
             return false;
     }
 
-    // get join year of userID
+    /**
+     * get join year of userID, return join year
+     */
     public int viewJoinYear(int userID){
         return da.viewJoinYear(userID);
     }
 
-    // view detail of leave
+    /**
+     * view detail of leave: 0->[Subject], 1->[Reason], 2->DateStart, 3->DateEnd, 4->Communication, 5->[Status]
+     */
     public ArrayList<String> viewDetailOfLeave(int leaveID){
             ArrayList<String> arrayList = new ArrayList<String>();
             RowSet rs = da.viewDetailOfLeave(leaveID);
         try {
-            if (rs.next()) {
+            if (rs.first()) {
                 arrayList.add(rs.getString(1));
                 arrayList.add(rs.getString(2));
                 arrayList.add(rs.getString(3));
@@ -108,7 +120,9 @@ class LeaveService {
         }
     }
 
-    // get newly leave
+    /**
+     * get newly leave, if ok return leaveID
+     */
     public int getNewlyLeave(int userID){
         try {
             RowSet rs = da.getNewlyLeave(userID);
@@ -124,24 +138,32 @@ class LeaveService {
 
     }
 
-    // check leave whether aprroved or not approved
+    /*
+     * check leave whether aprroved or not approved: approved -> -1 || not approved -> 1
+     */
     public int checkApprove(int leaveID){
         return da.checkApprove(leaveID);
     }
 
-    // check leave whether not aprroved or canceling
+    /**
+     * check leave whether not aprroved or canceling: Not Approved -> 1 || Canceling -> -1
+     */
     public int checkRequest(int leaveID){
         return da.checkRequest(leaveID);
     }
 
 
-    // view leave history
+    /**
+     * view leave history
+     */
     public DataObject viewLeaves(int userID, int year){
         return new DataObject(da.viewLeaveDetail(userID, year));
     }
 
-    
-    // view personal detail : [Total leave Days], [Remaining leave days]
+
+    /**
+     * view personal detail : [Total leave Days], [Remaining leave days]
+     */
     public Vector<String> viewPersonalDetail(int userID, int year){
         Vector<String> list = new Vector<String>();
         try {

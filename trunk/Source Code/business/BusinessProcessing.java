@@ -100,7 +100,9 @@ public class BusinessProcessing {
      *  Tasks involve Leave Service
      *
      *********************************************************************************************/
-    // change password
+    /**
+     * change password
+     */
     public void changePassword(final String newPassword, final String reNewPassword, final String oldPassword){
         thread = new Thread(){
             @Override
@@ -123,7 +125,9 @@ public class BusinessProcessing {
         thread.start();
     }
 
-    // apply new leave
+    /**
+     * apply new leave. Remark: date string must be in default locale of java virtual machine and in SHORT mode
+     */
     public void applyLeave(final int userID, final String dateStartStr, final String dateEndStr, final String reason, final String communication, final String subject ){
        thread = new Thread(){
             @Override
@@ -132,6 +136,11 @@ public class BusinessProcessing {
                     DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
                     Date dateStart = df.parse(dateStartStr);
                     Date dateEnd = df.parse(dateEndStr);
+                    if(dateStart.after(dateEnd))
+                    {
+                        //guiMan.showMessage("Date start cannot be later than date end !");
+                        return;
+                    }
                     if (leaveService.applyLeave(userID, dateStart, dateEnd, reason, communication, subject)) {
                         logService.createLog(userID, LogService.LOG_ACTION_LEAVE_APPLICATION, leaveService.getNewlyLeave(userID));
                         //guiMan.showMessage("Apply new leave successfully");
@@ -147,7 +156,10 @@ public class BusinessProcessing {
        thread.start();
     }
 
-    // withdraw/request cancel a leave
+    /**
+     *
+     * withdraw/request cancel a leave
+     */
     public void removeLeave(final int leaveID){
         thread = new Thread(){
             @Override
@@ -167,7 +179,10 @@ public class BusinessProcessing {
         thread.start();
     }
 
-    // get content in year combo box
+    /**
+     *
+     * get content in year combo box, return a vector of string
+     */
     public Vector<String> getYearList(final int userID){
         try {
             final Vector<String> list = new Vector<String>();
@@ -194,6 +209,11 @@ public class BusinessProcessing {
     }
 
     // get personal detail
+    /**
+     *
+     * get personal information in a specific year: [Total leave Days], [Remaining leave days]
+     *
+     */
     public Vector<String> viewPersonalDetail(final int year){
         final Vector<String> list = new Vector<String>();
         try {
@@ -216,7 +236,11 @@ public class BusinessProcessing {
 
     }
 
-    // view leave history
+    /**
+     *
+     * view leave history
+     *
+     */
     public DataObject viewLeaves(final int year){
         thread = new Thread(){
             @Override
@@ -242,7 +266,10 @@ public class BusinessProcessing {
      *
      *********************************************************************************************/
 
-    // view submitted leaves
+    /**
+     *
+     * view submitted leaves
+     */
     public DataObject viewSubmittedLeaves(){
         thread = new Thread(){
             @Override
@@ -262,7 +289,11 @@ public class BusinessProcessing {
         return dataObject;
     }
 
-    // approve/reject leave/request
+    /**
+     *
+     * approve(reject) leave(request) from userID <P> allowance = true to approve , allowance = false to reject
+     *
+     */
     public void updateLeaveStatus(final int leaveID, final boolean allowance){
         thread = new Thread(){
             @Override
@@ -290,7 +321,10 @@ public class BusinessProcessing {
         thread.start();
     }
 
-    // view list of subordinate
+    /**
+     *
+     * view list of subordinate
+     */
     public DataObject viewSubordinateList(){
         thread = new Thread(){
             @Override
@@ -315,7 +349,11 @@ public class BusinessProcessing {
      *  Tasks involve Report Service
      *
      *********************************************************************************************/
-     // view list
+    /**
+     *
+     *  view report about subordinate according to year
+     *
+     */
      public DataObject viewReport(final int year){
          thread = new Thread(){
             @Override
@@ -340,7 +378,12 @@ public class BusinessProcessing {
      *  Tasks involve Log Service
      *
      *********************************************************************************************/
-     // view log of userID
+
+     /**
+      *
+      *  view log of userID
+      *
+      */
      public DataObject viewLogDetailAll(final int subordinateID){
          thread = new Thread(){
             @Override
@@ -360,7 +403,10 @@ public class BusinessProcessing {
         return dataObject;
      }
 
-     // view log of userID form time to time
+     /**
+      *
+      * view log of userID form time to time
+      */
      public DataObject viewLogDetail(final int subordinateID, final Date dateStart, final Date dateEnd){
          thread = new Thread(){
             @Override
