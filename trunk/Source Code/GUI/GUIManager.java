@@ -5,11 +5,9 @@
 package GUI;
 
 import data.DataObject;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 
 /**
  *
@@ -25,6 +23,8 @@ public class GUIManager {
     };
     public static JFrame currentScreen = null;
     public static String strDate = null;
+    public static JTable table = null;
+   
 
     public static void showScreenX(Screen type,DataObject data) {
         switch (type) {
@@ -97,6 +97,10 @@ public class GUIManager {
 
     public static JFrame getCurrentScreen() {
         return currentScreen;
+    }
+
+    public static JTable getCurrentTable(){
+        return table;
     }
 
     public static void showMessageX(String message) {

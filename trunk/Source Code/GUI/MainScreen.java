@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
+import javax.swing.table.AbstractTableModel;
 
 /**
  *
@@ -63,6 +64,7 @@ public class MainScreen extends JFrame {
 
     public MainScreen(DataObject data) {
         // System.out.print("dadwa");
+        this.data = data;
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
@@ -123,8 +125,8 @@ public class MainScreen extends JFrame {
          strTotalDay = lbTotalDay.getText();
         strRemainDay = lbRemainDay.getText();
        
-        table = new JTable();
-         spTable = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        table = new JTable(data);
+        spTable = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
       //  table.setOpaque(false);
 
 
@@ -257,7 +259,8 @@ public class MainScreen extends JFrame {
                  //table
                  int row = table.getSelectedRow();
                  int t = Integer.parseInt(String.valueOf(table.getValueAt(row, 0)));
-                 System.out.println(t);
+                 bp.removeLeave(t);
+
 
             }
 
@@ -299,9 +302,11 @@ public class MainScreen extends JFrame {
                Vector vt =  bp.viewPersonalDetail(Integer.parseInt(cbYear.getSelectedItem().toString()));
                lbTotalDay.setText(strTotalDay + vt.get(0));
                lbRemainDay.setText(strRemainDay + vt.get(1));
+               GUIManager.table = table;
 
     }
 
+   
     public static void main(String[] avg){
          new MainScreen(null);
     }

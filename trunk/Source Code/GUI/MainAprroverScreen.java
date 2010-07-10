@@ -263,6 +263,19 @@ public class MainAprroverScreen extends JFrame {
             }
 
         });
+
+         lbRqCancel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                 BusinessProcessing bp = business.BusinessProcessing.getInstance();
+                 //table
+                 int row = table.getSelectedRow();
+                 int t = Integer.parseInt(String.valueOf(table.getValueAt(row, 0)));
+                 System.out.println(t);
+
+            }
+
+        });
     }
 
     private void setFontAndColor(Font f, Color c) {
@@ -299,6 +312,7 @@ public class MainAprroverScreen extends JFrame {
                Vector vt =  bp.viewPersonalDetail(Integer.parseInt(cbYear.getSelectedItem().toString()));
                lbTotalDay.setText(strTotalDay + vt.get(0));
                lbRemainDay.setText(strRemainDay + vt.get(1));
+               GUIManager.table = table;
                
     }
     public static void main(String[] avg) {
