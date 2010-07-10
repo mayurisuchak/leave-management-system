@@ -58,7 +58,7 @@ public class DataAccess {
 
     // view leave submitted to superiorID
     public RowSet viewSubmittedLeave(int superiorID, int year){
-        return db.query("EXEC sp_SubmitedLeaves " + superiorID + "," + year);
+        return db.query("EXEC sp_SubmittedLeaves " + superiorID + "," + year);
     }
 
     // view report of subordinate in year
@@ -153,17 +153,20 @@ public class DataAccess {
 
     // check userid is whether a superior or not, if ok return 1
     public boolean checkSuperior(int userID){
+        boolean check = false;
         try {
             RowSet rs = db.query("EXEC sp_CheckSuperior " + userID);
             rs.first();
             if (rs.getInt(1) > 0) {
-                return true;
+                check = true;
             } else {
-                return false;
+                check = false;
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            return false;
+            check = false;
+        }finally{
+            return check;
         }
     }
 
@@ -187,16 +190,19 @@ public class DataAccess {
 
     // get join year of userid, if ok return join year
     public int viewJoinYear(int userID){
+        int year = -1;
         try {
             RowSet rs = db.query("EXEC sp_JoinYear " + userID);
             if (rs.first()) {
-                return rs.getInt(1);
+                year = rs.getInt(1);
             } else {
-                return -1;
+                year = -1;
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            return -1;
+            year = -1;
+        } finally{
+            return year;
         }
     }
 
