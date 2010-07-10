@@ -1,6 +1,6 @@
 name = LMSPool
-maxPool = 3
-maxSize = 5
+maxPool = 10
+maxSize = 30
 idleTimeout = 0
 driverUrl = com.microsoft.sqlserver.jdbc.SQLServerDriver
 url = jdbc:sqlserver://
@@ -9,4 +9,3 @@ port = 1433
 database = LeaveManagementSystem
 password = abcd1234A
 user = app
-
