@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.AbstractList;
 import java.sql.Date;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Properties;
 import javax.sql.RowSet;
@@ -21,7 +22,7 @@ import snaq.db.ConnectionPool;
  *
  * @author uSeR
  */
-public class DBConnection extends Thread {
+public class DBConnection{
     private ConnectionPool cp;
     private CachedRowSet crs;
 
@@ -46,21 +47,24 @@ public class DBConnection extends Thread {
     public RowSet query(String sqlString){
         try {
             Connection conn = cp.getConnection();
-            Statement stm = conn.createStatement();
-            crs.populate(stm.executeQuery(sqlString));
+            Statement stm = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet r = stm.executeQuery(sqlString);
+            r.first();
+            crs.populate(r,1);
+            crs.first();
             stm.close();
             conn.close();
-            return crs;
         } catch (SQLException ex) {
             ex.printStackTrace();
-            return null;
+        } finally{
+            return crs;
         }
     }
 
     public RowSet complexQuery(String prepareSQL, AbstractList<Object> params){
         try {
             Connection conn = cp.getConnection();
-            PreparedStatement preStm = conn.prepareStatement(prepareSQL);
+            PreparedStatement preStm = conn.prepareStatement(prepareSQL, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
             int paramsCount = params.size();
             for(int i = 0; i < paramsCount; i++)
             {
@@ -80,17 +84,18 @@ public class DBConnection extends Thread {
                     preStm.setBoolean(i+1, (Boolean)params.get(i));
 
             }
-            crs.populate(preStm.executeQuery());
+            crs.populate(preStm.executeQuery(),1);
             preStm.close();
             conn.close();
-            return crs;
         } catch (SQLException ex) {
             ex.printStackTrace();
-            return null;
+        } finally{
+            return crs;
         }
     }
 
     public int queryUpdate(String prepareSQL, AbstractList<Object> params){
+        int affectedRows = 0;
         try {
             Connection conn = cp.getConnection();
             PreparedStatement preStm = conn.prepareStatement(prepareSQL);
@@ -113,13 +118,14 @@ public class DBConnection extends Thread {
                     preStm.setBoolean(i+1, (Boolean)params.get(i));
 
             }
-            int affectedRows = preStm.executeUpdate();
+            affectedRows = preStm.executeUpdate();
             conn.close();
             preStm.close();
-            return affectedRows;
         } catch (SQLException ex) {
             ex.printStackTrace();
-            return -1;
+            affectedRows = -1;
+        } finally{
+            return affectedRows;
         }
     }
 
@@ -143,10 +149,6 @@ public class DBConnection extends Thread {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-    }
-
-    public void run() {
-
     }
 
 }
