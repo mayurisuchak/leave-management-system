@@ -1,7 +1,10 @@
 package data;
 
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sql.RowSet;
+import javax.sql.rowset.CachedRowSet;
 import javax.swing.table.AbstractTableModel;
 
 /*
@@ -14,10 +17,14 @@ import javax.swing.table.AbstractTableModel;
  * @author uSeR
  */
 public class DataObject extends AbstractTableModel {
-    private RowSet rs;
+    private CachedRowSet rs;
 
     public DataObject(RowSet rs){
-        this.rs = rs;
+        try {
+            this.rs = ((CachedRowSet) rs).createCopy();
+        } catch (SQLException ex) {
+            Logger.getLogger(DataObject.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public int getRowCount() {
@@ -34,6 +41,7 @@ public class DataObject extends AbstractTableModel {
             ex.printStackTrace();
             count = 0;
         }finally{
+            //sSystem.out.println(count);
             return count;
         }
     }
@@ -52,10 +60,12 @@ public class DataObject extends AbstractTableModel {
         try {
             rs.absolute(rowIndex+1);
             value = rs.getObject(columnIndex+1);
+
         } catch (SQLException ex) {
             ex.printStackTrace();
             value = -1;
         } finally{
+           // System.out.println(value);
             return value;
         }
 
@@ -71,6 +81,7 @@ public class DataObject extends AbstractTableModel {
             ex.printStackTrace();
             colName = "Error";
         }finally{
+            //System.out.println(colName);
             return colName;
         }
     }
