@@ -113,9 +113,11 @@ public class MainScreen extends JFrame {
         lbRemainDay = new JLabel("Remain Leave Day ");
         lbYear = new JLabel("Year ");
         lbUsername = new JLabel("hung");
+        lbUsername = new JLabel(bp.getUsername());
         lbUsername.setFont(new Font("tahoma", Font.ITALIC | Font.BOLD, 11));
         lbUsername.setForeground(new Color(0, 0, 255));
         cbYear = new JComboBox(bp.getYearList(bp.getUserID()));
+        cbYear.setSelectedIndex(cbYear.getItemCount()-1);
        
 
          strTotalDay = lbTotalDay.getText();
@@ -144,8 +146,8 @@ public class MainScreen extends JFrame {
         lbLogin.setBounds(3 * MY_WIDTH / 4, lbCalendar.getY(), 100, 14);
         lbUsername.setBounds(lbLogin.getX() + 50, lbCalendar.getY(), 100, 14);
         lbSignout.setBounds(MY_WIDTH - 50, lbCalendar.getY(), 100, 14);
-        lbTotalDay.setBounds(10, 100, 100, 14);
-        lbRemainDay.setBounds(lbTotalDay.getX(), lbTotalDay.getY() + 20, 100, 14);
+        lbTotalDay.setBounds(10, 100, 150, 14);
+        lbRemainDay.setBounds(lbTotalDay.getX(), lbTotalDay.getY() + 20, 150, 14);
         lbYear.setBounds(lbTotalDay.getX(), lbRemainDay.getY() + 20, 100, 14);
         cbYear.setBounds(lbYear.getX()+40, lbYear.getY(), 50, 20);
         spTable.setBounds(MY_WIDTH / 4 + 50, 80, 400, 200);
@@ -155,6 +157,8 @@ public class MainScreen extends JFrame {
       //  lbRqCancel.setBounds(100,0, imgBtCancel.getIconWidth(), imgBtCancel.getIconHeight());
         lbRqCancel.setBounds(lbApplyLeave.getX()+100,lbApplyLeave.getY(), imgBtCancel.getIconWidth(), imgBtCancel.getIconHeight());
 
+        
+        
         Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
         lbHelp.setCursor(cursor);
         lbCalendar.setCursor(cursor);
@@ -242,6 +246,19 @@ public class MainScreen extends JFrame {
             @Override
             public void mouseReleased(MouseEvent e) {
                 GUIManager.showScreenX(GUIManager.Screen.LoginScreen, null);
+            }
+
+        });
+
+        lbRqCancel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                 BusinessProcessing bp = business.BusinessProcessing.getInstance();
+                 //table
+                 int row = table.getSelectedRow();
+                 int t = Integer.parseInt(String.valueOf(table.getValueAt(row, 0)));
+                 System.out.println(t);
+
             }
 
         });
