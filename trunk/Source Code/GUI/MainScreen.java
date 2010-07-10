@@ -4,20 +4,25 @@
  */
 package GUI;
 
+import business.BusinessProcessing;
+import data.DataObject;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
-import javax.swing.table.TableCellRenderer;
 
 /**
  *
@@ -46,12 +51,17 @@ public class MainScreen extends JFrame {
     private Font mFont;
     private Color mColor;
     private JLabel lbSpectator;
-    private JLabel lbTable;
+  //  private JLabel lbTable;
     private JLabel lbViewReport;
     private JComboBox cbYear;
+    private JScrollPane spTable;
+
+      DataObject data;
+    private String strTotalDay;
+    private String strRemainDay;
     //  private JLabel lpanel;
 
-    public MainScreen() {
+    public MainScreen(DataObject data) {
         // System.out.print("dadwa");
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -76,6 +86,7 @@ public class MainScreen extends JFrame {
         setBounds(300, 200, MY_WIDTH, MY_HEIGHT);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
+       // table.setModel(data);
     }
 
     private void init() {
@@ -87,11 +98,11 @@ public class MainScreen extends JFrame {
         ImageIcon imgTop = new ImageIcon(strUrl + "top.png");
         ImageIcon imgBot = new ImageIcon(strUrl + "bottom.png");
         ImageIcon imgSpectator = new ImageIcon(strUrl + "line.png");
-        ImageIcon imgLpanel = new ImageIcon(strUrl + "panelLeft.png");
         ImageIcon imgBtApply = new ImageIcon(strUrl + "btn_applyLeave.png");
-        ImageIcon imgBtCancel = new ImageIcon(strUrl + "btn_requestCan.png");
+        ImageIcon imgBtCancel = new ImageIcon(strUrl + "btn_requestCancel.png");
         ImageIcon imgTabel = new ImageIcon(strUrl + "mainTable.png");
 
+         BusinessProcessing bp = business.BusinessProcessing.getInstance();
         lbViewReport = new JLabel("View Report");
         lbCalendar = new JLabel("Calendar");
         lbChangePass = new JLabel("Change Password");
@@ -104,34 +115,30 @@ public class MainScreen extends JFrame {
         lbUsername = new JLabel("hung");
         lbUsername.setFont(new Font("tahoma", Font.ITALIC | Font.BOLD, 11));
         lbUsername.setForeground(new Color(0, 0, 255));
-        cbYear = new JComboBox();
-        table = new JTable() {
+        cbYear = new JComboBox(bp.getYearList(bp.getUserID()));
+       
 
-            @Override
-            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
-                Component c = super.prepareRenderer(renderer, row, column);
-                // We want renderer component to be transparent so background image is visible
-                if (c instanceof JComponent) {
-                    ((JComponent) c).setOpaque(false);
-                }
-                return c;
-            }
-        };
-        table.setOpaque(false);
+         strTotalDay = lbTotalDay.getText();
+        strRemainDay = lbRemainDay.getText();
+       
+        table = new JTable();
+         spTable = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      //  table.setOpaque(false);
+
 
         topPanel = new JLabel(imgTop);
         botPanel = new JLabel(imgBot);
         lbSpectator = new JLabel(imgSpectator);
         lbApplyLeave = new JLabel(imgBtApply);
         lbRqCancel = new JLabel(imgBtCancel);
-        lbTable = new JLabel(imgTabel);
+      //  lbTable = new JLabel(imgTabel);
         // lpanel = new JLabel(imgLpanel);
 
         // lpanel.setBounds(5, 80, imgLpanel.getIconWidth(), imgLpanel.getIconHeight()-50);
         topPanel.setBounds(0, 0, imgTop.getIconWidth(), imgTop.getIconHeight());
         botPanel.setBounds(0, 335, imgBot.getIconWidth(), imgBot.getIconHeight());
         lbSpectator.setBounds(0, 75, imgSpectator.getIconWidth(), imgSpectator.getIconHeight());
-        lbCalendar.setBounds(5, 50, 100, 14);
+        lbCalendar.setBounds(5, 50, 50, 14);
         lbChangePass.setBounds(lbCalendar.getX() + 60, lbCalendar.getY(), 100, 14);
         lbHelp.setBounds(lbChangePass.getX() + 110, lbCalendar.getY(), 50, 14);
         lbLogin.setBounds(3 * MY_WIDTH / 4, lbCalendar.getY(), 100, 14);
@@ -141,10 +148,12 @@ public class MainScreen extends JFrame {
         lbRemainDay.setBounds(lbTotalDay.getX(), lbTotalDay.getY() + 20, 100, 14);
         lbYear.setBounds(lbTotalDay.getX(), lbRemainDay.getY() + 20, 100, 14);
         cbYear.setBounds(lbYear.getX()+40, lbYear.getY(), 50, 20);
-        table.setBounds(MY_WIDTH / 4 + 50, 80, 400, 200);
-        lbTable.setBounds(table.getX(), table.getY(), table.getWidth(), table.getHeight());
-        lbApplyLeave.setBounds(table.getX(), table.getY() + table.getHeight() + 10, imgBtApply.getIconWidth(), imgBtCancel.getIconHeight());
-        lbRqCancel.setBounds(lbApplyLeave.getX() + 90, lbApplyLeave.getY() - 30, imgBtCancel.getIconWidth(), imgBtCancel.getIconWidth());
+        spTable.setBounds(MY_WIDTH / 4 + 50, 80, 400, 200);
+       // lbTable.setBounds(table.getX(), table.getY(), table.getWidth(), table.getHeight());
+        lbApplyLeave.setBounds(spTable.getX(), spTable.getY() + spTable.getHeight() + 10, imgBtApply.getIconWidth(), imgBtApply.getIconHeight());
+        // lbApplyLeave.setBounds(table.getX(),table.getY() + table.getHeight() + 10, imgBtApply.getIconWidth(), imgBtApply.getIconHeight());
+      //  lbRqCancel.setBounds(100,0, imgBtCancel.getIconWidth(), imgBtCancel.getIconHeight());
+        lbRqCancel.setBounds(lbApplyLeave.getX()+100,lbApplyLeave.getY(), imgBtCancel.getIconWidth(), imgBtCancel.getIconHeight());
 
         Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
         lbHelp.setCursor(cursor);
@@ -158,8 +167,8 @@ public class MainScreen extends JFrame {
         add(topPanel);
         add(botPanel);
         //table and table background
-        add(table);
-        add(lbTable);
+        add(spTable);
+      //  add(lbTable);
         //add(lpanel);
 
         //add top function
@@ -174,8 +183,7 @@ public class MainScreen extends JFrame {
         // add left panel
         add(lbRemainDay);
         add(lbTotalDay);
-        add(cbYear);
-     
+        add(cbYear);     
         add(lbYear);
 
         //add buttons
@@ -184,6 +192,59 @@ public class MainScreen extends JFrame {
            // add(lbWithdraw);
 
         setFontAndColor(mFont, mColor);
+
+        //init data
+        initData();
+        
+        //add action
+        cbYear.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+               BusinessProcessing bp = business.BusinessProcessing.getInstance();
+               Vector vt =  bp.viewPersonalDetail(Integer.parseInt(cbYear.getSelectedItem().toString()));
+               lbTotalDay.setText(strTotalDay + vt.get(0));
+               lbRemainDay.setText(strRemainDay + vt.get(1));
+               data = bp.viewLeaves(Integer.parseInt(cbYear.getSelectedItem().toString()));
+               table.setModel(data);
+
+            }
+        });
+
+        lbCalendar.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                CalendarProgram cp = new CalendarProgram();
+            }
+
+        });
+
+        lbChangePass.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                GUIManager.showScreenX(GUIManager.Screen.ChangePassScreen, null);
+            }
+
+        });
+
+        lbApplyLeave.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                GUIManager.showScreenX(GUIManager.Screen.AddNewScreen, null);
+            }
+
+        });
+
+        lbSignout.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                GUIManager.showScreenX(GUIManager.Screen.LoginScreen, null);
+            }
+
+        });
 
     }
 
@@ -216,8 +277,16 @@ public class MainScreen extends JFrame {
         lbYear.setForeground(c);
     }
 
-    public static void main(String[] avg) {
-        //  new LoginScreen();
-        new MainScreen();
+    private  void initData(){
+               BusinessProcessing bp = business.BusinessProcessing.getInstance();
+               Vector vt =  bp.viewPersonalDetail(Integer.parseInt(cbYear.getSelectedItem().toString()));
+               lbTotalDay.setText(strTotalDay + vt.get(0));
+               lbRemainDay.setText(strRemainDay + vt.get(1));
+
     }
+
+    public static void main(String[] avg){
+         new MainScreen(null);
+    }
+   
 }
