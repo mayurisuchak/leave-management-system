@@ -50,7 +50,7 @@ public class DataObject extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         Object value = null;
         try {
-            rs.absolute(rowIndex);
+            rs.absolute(rowIndex+1);
             value = rs.getObject(columnIndex+1);
         } catch (SQLException ex) {
             ex.printStackTrace();
