@@ -107,7 +107,7 @@ CREATE PROCEDURE sp_LeaveDetail
 	@UserID INT,
 	@Year INT
 AS
-SELECT [Subject], DateStart AS [From], DateEnd AS [To], [State] AS [Status]
+SELECT LeaveID as [ID], [Subject], DateStart AS [From], DateEnd AS [To], [State] AS [Status]
 	FROM Leave
 	WHERE UserID = @UserID AND YEAR(DateStart) = @Year
 GO
