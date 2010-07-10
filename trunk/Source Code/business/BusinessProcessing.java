@@ -231,7 +231,7 @@ public class BusinessProcessing {
                 thread.join(1000);
             return list;
         } catch (InterruptedException ex) {
-            return null;
+            return list;
         }
 
     }
@@ -258,6 +258,30 @@ public class BusinessProcessing {
                 return null;
         }
         return dataObject;
+    }
+
+     /**
+     * view detail of leave: 0->[Subject], 1->[Reason], 2->DateStart, 3->DateEnd, 4->Communication, 5->[Status]
+     */
+    public Vector<String> viewDetailOfLeave(final int leaveID){
+        final Vector<String> list = new Vector<String>();
+        try {
+            thread = new Thread() {
+
+                @Override
+                public void run() {
+                    list.addAll(leaveService.viewDetailOfLeave(leaveID));
+
+                }
+            };
+            thread.start();
+            // pause main thread execution
+            while (thread.isAlive())
+                thread.join(1000);
+            return list;
+        } catch (InterruptedException ex) {
+            return list;
+        }
     }
 
     /*********************************************************************************************
