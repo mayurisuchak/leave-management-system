@@ -126,7 +126,7 @@ class LeaveService {
     public int getNewlyLeave(int userID){
         try {
             RowSet rs = da.getNewlyLeave(userID);
-            if (rs.next()) {
+            if (rs.first()) {
                 return rs.getInt(1);
             }else{
                 return -1;

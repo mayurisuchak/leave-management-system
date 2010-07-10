@@ -13,6 +13,7 @@ import java.util.AbstractList;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.Properties;
 import javax.sql.RowSet;
 import javax.sql.rowset.CachedRowSet;
@@ -114,7 +115,7 @@ public class DBConnection{
                 else if(type.indexOf("Date") > -1)
                 {
                     java.util.Date date = (java.util.Date)params.get(i);
-                    preStm.setDate(i+1, new Date(date.getTime()));
+                    preStm.setTimestamp(i+1, new Timestamp(date.getTime()));
                 }
                 else if(type.indexOf("Boolean") > -1)
                     preStm.setBoolean(i+1, (Boolean)params.get(i));
