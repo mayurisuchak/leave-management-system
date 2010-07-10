@@ -23,13 +23,19 @@ public class DataObject extends AbstractTableModel {
     public int getRowCount() {
         int count = 0;
         try {
-            while (rs.next()) {
-                count++;
+            if(rs.first())
+            {
+                count = 1;
+                while (rs.next()) {
+                    count++;
+                }
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
+            count = 0;
+        }finally{
+            return count;
         }
-        return count;
     }
 
     public int getColumnCount() {
@@ -42,23 +48,30 @@ public class DataObject extends AbstractTableModel {
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
+        Object value = null;
         try {
             rs.absolute(rowIndex);
-            return rs.getObject(columnIndex);
+            value = rs.getObject(columnIndex+1);
         } catch (SQLException ex) {
             ex.printStackTrace();
-            return -1;
+            value = -1;
+        } finally{
+            return value;
         }
 
     }
 
     @Override
     public String getColumnName(int columnIndex){
+        String colName;
+        colName = "Error";
         try{
-            return rs.getMetaData().getColumnName(columnIndex);
+            colName = rs.getMetaData().getColumnName(columnIndex+1);
         }catch(SQLException ex){
             ex.printStackTrace();
-            return "Error";
+            colName = "Error";
+        }finally{
+            return colName;
         }
     }
 
