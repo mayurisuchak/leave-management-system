@@ -16,7 +16,6 @@ import javax.swing.JTable;
 public class GUIManager {
 
     public static enum Screen {
-
         LoginScreen, MainScreen, AddNewScreen,ChangePassScreen,
         LogScreen, ListEmployeeScreen, MainAprroverScreen,
         ManagerLeaveScreen, ReportScreen, ViewLeaveScreen
@@ -46,17 +45,14 @@ public class GUIManager {
                 }
                 currentScreen = new AddNewScreen();
                 break;
-            case LogScreen:
-                if (currentScreen != null) {
-                    currentScreen.dispose();
-                }
-                currentScreen = new LogScreen();
+            case LogScreen:                
+                 new LogScreen(data);
                 break;
             case ListEmployeeScreen:
                 if (currentScreen != null) {
                     currentScreen.dispose();
                 }
-                currentScreen = new ListEmployeeScreen();
+                currentScreen = new ListEmployeeScreen(data);
                 break;
             case MainAprroverScreen:
                 if (currentScreen != null) {
@@ -69,19 +65,16 @@ public class GUIManager {
                 if (currentScreen != null) {
                     currentScreen.dispose();
                 }
-                currentScreen = new ManagerLeaveScreen();
+                currentScreen = new ManagerLeaveScreen(data);
                 break;
             case ReportScreen:
                 if (currentScreen != null) {
                     currentScreen.dispose();
                 }
-                currentScreen = new ReportScreen();
+                currentScreen = new ReportScreen(data);
                 break;
             case ViewLeaveScreen:
-                if (currentScreen != null) {
-                    currentScreen.dispose();
-                }
-                currentScreen = new ViewLeaveScreen();
+                new ViewLeaveScreen(data);
                 break;
             case ChangePassScreen:
                 if(currentScreen != null){

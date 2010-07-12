@@ -57,7 +57,7 @@ public class DataAccess {
     }
 
     // view leave submitted to superiorID
-    public RowSet viewSubmittedLeave(int superiorID, int year){
+    public RowSet viewSubmittedLeaves(int superiorID, int year){
         return db.query("EXEC sp_SubmittedLeaves " + superiorID + "," + year);
     }
 

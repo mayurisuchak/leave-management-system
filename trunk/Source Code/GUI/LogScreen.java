@@ -4,6 +4,7 @@
  */
 package GUI;
 
+import data.DataObject;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -25,7 +26,7 @@ import javax.swing.table.TableCellRenderer;
  */
 public class LogScreen extends JFrame {
 
-    private static int MY_HEIGHT = 385;
+    private static int MY_HEIGHT = 412;
     private static int MY_WIDTH = 620;
     private JLabel topPanel;
     private JLabel botPanel;
@@ -40,9 +41,11 @@ public class LogScreen extends JFrame {
     private JLabel lbToDate;
     private JTextField tfFromDate;
     private JTextField tfToDate;
-     private JScrollPane spTable;
+    private JScrollPane spTable;
+    private DataObject data;
 
-    public LogScreen() {
+    public LogScreen(DataObject data) {
+        this.data = data;
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
@@ -64,7 +67,7 @@ public class LogScreen extends JFrame {
 
 
         setBounds(300, 200, MY_WIDTH, MY_HEIGHT);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setVisible(true);
     }
 
@@ -78,26 +81,16 @@ public class LogScreen extends JFrame {
         ImageIcon imgBot = new ImageIcon(strUrl + "bottom.png");
         ImageIcon imgSpectator = new ImageIcon(strUrl + "line.png");
         ImageIcon imgTabel = new ImageIcon(strUrl + "mainTable.png");
-         spTable = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        table = new JTable() {
 
-            @Override
-            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
-                Component c = super.prepareRenderer(renderer, row, column);
-                // We want renderer component to be transparent so background image is visible
-                if (c instanceof JComponent) {
-                    ((JComponent) c).setOpaque(false);
-                }
-                return c;
-            }
-        };
-        table.setOpaque(false);
+        table = new JTable(data);
+        spTable = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
 
         topPanel = new JLabel(imgTop);
         botPanel = new JLabel(imgBot);
         lbSpectator = new JLabel(imgSpectator);
         //lbTable = new JLabel(imgTabel);
-
+        
         lbFromDate = new JLabel("From Date ");
         lbToDate = new JLabel("To Date ");
         JLabel temp = new JLabel("Log");
@@ -109,14 +102,14 @@ public class LogScreen extends JFrame {
         tfToDate = new JTextField();
 
         topPanel.setBounds(0, 0, imgTop.getIconWidth(), imgTop.getIconHeight());
-        botPanel.setBounds(0, 335, imgBot.getIconWidth(), imgBot.getIconHeight());
+        botPanel.setBounds(0, 360, imgBot.getIconWidth(), imgBot.getIconHeight());
         lbSpectator.setBounds(0, 75, imgSpectator.getIconWidth(), imgSpectator.getIconHeight());
         temp2.setBounds(10, lbSpectator.getY() + 10, 100, 14);
         lbUsername.setBounds(temp2.getX() + 60, temp2.getY(), 100, 14);
-        lbFromDate.setBounds(MY_WIDTH/3, lbUsername.getY(), 100, 14);
-        tfFromDate.setBounds(lbFromDate.getX()+60, lbUsername.getY(), 100,20);
-        lbToDate.setBounds(tfFromDate.getX()+120, lbUsername.getY(), 100, 14);
-        tfToDate.setBounds(lbToDate.getX()+50, lbUsername.getY(), 100, 20);
+        lbFromDate.setBounds(MY_WIDTH / 3, lbUsername.getY(), 100, 14);
+        tfFromDate.setBounds(lbFromDate.getX() + 60, lbUsername.getY(), 100, 20);
+        lbToDate.setBounds(tfFromDate.getX() + 120, lbUsername.getY(), 100, 14);
+        tfToDate.setBounds(lbToDate.getX() + 50, lbUsername.getY(), 100, 20);
         spTable.setBounds(10, 110, 590, 210);
         ///  lbTable.setBounds(table.getX(), table.getY(), 590,210);
 
@@ -151,6 +144,6 @@ public class LogScreen extends JFrame {
     }
 
     public static void main(String[] avg) {
-        new LogScreen();
+        new LogScreen(null);
     }
 }

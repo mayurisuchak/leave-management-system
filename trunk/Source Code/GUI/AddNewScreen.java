@@ -13,6 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.GregorianCalendar;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,7 +28,7 @@ import javax.swing.UIManager;
  */
 public class AddNewScreen extends JFrame {
 
-    private static int MY_HEIGHT = 385;
+    private static int MY_HEIGHT = 412;
     private static int MY_WIDTH = 620;
     private JLabel topPanel;
     private JLabel botPanel;
@@ -45,6 +46,7 @@ public class AddNewScreen extends JFrame {
     private JTextField tfFromDate;
     private JTextField tfToDate;
     private JTextArea taAddress;
+    private JLabel lbBack;
 
     public AddNewScreen() {
         try {
@@ -81,7 +83,7 @@ public class AddNewScreen extends JFrame {
         ImageIcon imgSpectator = new ImageIcon(strUrl + "line.png");
         ImageIcon imgSendBt = new ImageIcon(strUrl + "btn_send.png");
         ImageIcon imgClearBt = new ImageIcon(strUrl + "btn_clear.png");
-
+        ImageIcon imagBack = new ImageIcon(strUrl + "btn_back2Detail.png");
 
 
         //System.out.print(lbUsername.getY());
@@ -95,6 +97,7 @@ public class AddNewScreen extends JFrame {
         lbSpectator = new JLabel(imgSpectator);
         lbClearBt = new JLabel(imgClearBt);
         lbSendBt = new JLabel(imgSendBt);
+        lbBack = new JLabel(imagBack);
 
 
         lbSubject = new JLabel("Subject");
@@ -111,7 +114,7 @@ public class AddNewScreen extends JFrame {
         taAddress = new JTextArea(30, 50);
 
         topPanel.setBounds(0, 0, imgTop.getIconWidth(), imgTop.getIconHeight());
-        botPanel.setBounds(0, 335, imgBot.getIconWidth(), imgBot.getIconHeight());
+        botPanel.setBounds(0, 360, imgBot.getIconWidth(), imgBot.getIconHeight());
         temp.setBounds(5, 50, 100, 13);
         lbSpectator.setBounds(0, 75, imgSpectator.getIconWidth(), imgSpectator.getIconHeight());
         lbSubject.setBounds(5, lbSpectator.getY() + 25, 150, 14);
@@ -119,6 +122,7 @@ public class AddNewScreen extends JFrame {
         lbFromDate.setBounds(MY_WIDTH / 2, lbSubject.getY(), 150, 14);
         lbToDate.setBounds(lbFromDate.getX(), lbFromDate.getY() + 30, 150, 14);
         lbAddress.setBounds(lbToDate.getX(), lbToDate.getY() + 30, 150, 28);
+        lbBack.setBounds(MY_WIDTH - 150, 40, imagBack.getIconWidth(), imagBack.getIconHeight());
 
         tfSubject.setBounds(lbSubject.getX() + 110, lbSubject.getY(), 150, 20);
         taReason.setBounds(lbReason.getX() + 110, lbReason.getY(), 150, 80);
@@ -133,6 +137,8 @@ public class AddNewScreen extends JFrame {
         Cursor cu = new Cursor(Cursor.HAND_CURSOR);
         lbSendBt.setCursor(cu);
         lbClearBt.setCursor(cu);
+        lbBack.setCursor(cu);
+
 
         tfFromDate.setEditable(false);
         tfToDate.setEditable(false);
@@ -147,6 +153,7 @@ public class AddNewScreen extends JFrame {
         add(lbFromDate);
         add(lbToDate);
         add(lbAddress);
+        add(lbBack);
 
         add(tfFromDate);
         add(tfSubject);
@@ -164,7 +171,7 @@ public class AddNewScreen extends JFrame {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                CalendarProgram cp = new CalendarProgram();
+                CalendarProgram cp =  CalendarProgram.getInstance();
                 cp.frmMain.addWindowListener(new WindowAdapter() {
 
                     @Override
@@ -179,7 +186,7 @@ public class AddNewScreen extends JFrame {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                CalendarProgram cp = new CalendarProgram();
+                CalendarProgram cp = CalendarProgram.getInstance();
                 cp.frmMain.addWindowListener(new WindowAdapter() {
 
                     @Override
@@ -208,18 +215,34 @@ public class AddNewScreen extends JFrame {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-               String strSub = tfSubject.getText();
-               String strFromdate = tfFromDate.getText();
-               String strToDate = tfToDate.getText();
-               String strReason = taReason.getText();
-               String strAdd = taAddress.getText();
-               if(strSub.equals("") || strFromdate.equals("") || strToDate.equals("") || strReason.equals("") || strAdd.equals("")){
+                String strSub = tfSubject.getText();
+                String strFromdate = tfFromDate.getText();
+                String strToDate = tfToDate.getText();
+                String strReason = taReason.getText();
+                String strAdd = taAddress.getText();
+                if (strSub.equals("") || strFromdate.equals("") || strToDate.equals("") || strReason.equals("") || strAdd.equals("")) {
                     GUIManager.showMessageX("Please fill all infomation");
                     return;
-               }
-               
-               BusinessProcessing bp = business.BusinessProcessing.getInstance();
-               bp.applyLeave(bp.getUserID(), tfFromDate.getText(), tfToDate.getText(),  taReason.getText(), taAddress.getText(), tfSubject.getText());
+                }
+
+                BusinessProcessing bp = business.BusinessProcessing.getInstance();
+                bp.applyLeave(bp.getUserID(), tfFromDate.getText(), tfToDate.getText(), taReason.getText(), taAddress.getText(), tfSubject.getText());
+            }
+        });
+
+        lbBack.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                GregorianCalendar cal = new GregorianCalendar(); //Create calendar
+                BusinessProcessing bp = business.BusinessProcessing.getInstance();
+                int realYear = cal.get(GregorianCalendar.YEAR);
+                if (bp.isSuperior()) {
+
+                    GUIManager.showScreenX(GUIManager.Screen.MainAprroverScreen, bp.viewLeaves(realYear));
+                } else {
+                    GUIManager.showScreenX(GUIManager.Screen.MainScreen, bp.viewLeaves(realYear));
+                }
             }
         });
 

@@ -4,21 +4,24 @@
  */
 package GUI;
 
+import business.BusinessProcessing;
+import data.DataObject;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.GregorianCalendar;
+import java.util.Vector;
 import javax.swing.ImageIcon;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
-import javax.swing.table.TableCellRenderer;
 
 /**
  *
@@ -26,7 +29,7 @@ import javax.swing.table.TableCellRenderer;
  */
 public class ManagerLeaveScreen extends JFrame {
 
-    private static int MY_HEIGHT = 385;
+    private static int MY_HEIGHT = 412;
     private static int MY_WIDTH = 620;
     private JLabel topPanel;
     private JLabel botPanel;
@@ -53,16 +56,19 @@ public class ManagerLeaveScreen extends JFrame {
     private JLabel lbFullName;
     private JLabel lbCode;
      private JScrollPane spTable;
+     private DataObject data;
+
     //  private JLabel lpanel;
 
-    public ManagerLeaveScreen() {
+    public ManagerLeaveScreen(DataObject data) {
+        this.data = data;
         // System.out.print("dadwa");
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        final ImageIcon imgBG = new ImageIcon("src/resource/bg.jpg");
+        final ImageIcon imgBG = new ImageIcon("src/resource/bg2.jpg");
         init();
         panel = new JPanel() {
 
@@ -87,7 +93,7 @@ public class ManagerLeaveScreen extends JFrame {
         mFont = new Font("Tahoma", Font.BOLD, 10);
         mColor = new Color(255, 255, 255);
         String strUrl = "src/resource/buttons/";
-
+        BusinessProcessing bp = business.BusinessProcessing.getInstance();
         ImageIcon imgTop = new ImageIcon(strUrl + "top.png");
         ImageIcon imgBot = new ImageIcon(strUrl + "bottom.png");
         ImageIcon imgSpectator = new ImageIcon(strUrl + "line.png");
@@ -110,22 +116,12 @@ public class ManagerLeaveScreen extends JFrame {
 
         lbList = new JLabel("View List Employee");
         lbViewReport = new JLabel("View Report");
-        lbUsername = new JLabel("hung");
+        lbUsername = new JLabel(bp.getUsername());
         lbUsername.setFont(new Font("tahoma", Font.ITALIC | Font.BOLD, 11));
         lbUsername.setForeground(new Color(0, 0, 255));
-         spTable = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        table = new JTable() {
-
-            @Override
-            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
-                Component c = super.prepareRenderer(renderer, row, column);
-                // We want renderer component to be transparent so background image is visible
-                if (c instanceof JComponent) {
-                    ((JComponent) c).setOpaque(false);
-                }
-                return c;
-            }
-        };
+       
+        table = new JTable(data);
+          spTable = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         table.setOpaque(false);
 
         topPanel = new JLabel(imgTop);
@@ -140,7 +136,7 @@ public class ManagerLeaveScreen extends JFrame {
 
         // lpanel.setBounds(5, 80, imgLpanel.getIconWidth(), imgLpanel.getIconHeight()-50);
         topPanel.setBounds(0, 0, imgTop.getIconWidth(), imgTop.getIconHeight());
-        botPanel.setBounds(0, 335, imgBot.getIconWidth(), imgBot.getIconHeight());
+        botPanel.setBounds(0, 360, imgBot.getIconWidth(), imgBot.getIconHeight());
         lbSpectator.setBounds(0, 75, imgSpectator.getIconWidth(), imgSpectator.getIconHeight());
         lbCalendar.setBounds(5, 50, 100, 14);
         lbChangePass.setBounds(lbCalendar.getX() + 60, lbCalendar.getY(), 100, 14);
@@ -148,15 +144,15 @@ public class ManagerLeaveScreen extends JFrame {
         lbLogin.setBounds(3 * MY_WIDTH / 4, lbCalendar.getY(), 100, 14);
         lbUsername.setBounds(lbLogin.getX() + 50, lbCalendar.getY(), 100, 14);
         lbSignout.setBounds(MY_WIDTH - 50, lbCalendar.getY(), 100, 14);
-        lbViewReport.setBounds(10, 100, 100, 14);
+        lbViewReport.setBounds(10, 105, 100, 14);
         lbList.setBounds(lbViewReport.getX(),lbViewReport.getY()+20 ,100 ,14 );
-        lbSmallSpector.setBounds(5,lbList.getY()+20 ,100 ,imgSpectator.getIconHeight() );
-        lbFullName.setBounds(lbViewReport.getX(), lbSmallSpector.getY()+5, 100, 14);
-        lbCode.setBounds(lbViewReport.getX(), lbFullName.getY()+20, 100, 14);
-        lbTotalDay.setBounds(lbViewReport.getX(), lbCode.getY()+20, 100, 14);
-        lbRemainDay.setBounds(lbViewReport.getX(), lbTotalDay.getY() + 20, 100, 14);
+        lbSmallSpector.setBounds(6,lbList.getY()+20 ,155 ,imgSpectator.getIconHeight() );
+        lbFullName.setBounds(lbViewReport.getX(), lbSmallSpector.getY()+5, 150, 14);
+        lbCode.setBounds(lbViewReport.getX(), lbFullName.getY()+20, 150, 14);
+        lbTotalDay.setBounds(lbViewReport.getX(), lbCode.getY()+20, 150, 14);
+        lbRemainDay.setBounds(lbViewReport.getX(), lbTotalDay.getY() + 20, 150, 14);
 
-        spTable.setBounds(MY_WIDTH / 4 + 50, 80, 400, 200);
+        spTable.setBounds(lbHelp.getX(), 85, 430, 200);
        // lbTable.setBounds(table.getX(), table.getY(), table.getWidth(), table.getHeight());
         lbApprove.setBounds(spTable.getX(), spTable.getY() + spTable.getHeight() + 10, imgBtApprove.getIconWidth(), imgBtApprove.getIconHeight());
         lbReject.setBounds(lbApprove.getX() + 90, lbApprove.getY() - 25, imgBtReject.getIconWidth(), imgBtReject.getIconWidth());
@@ -209,6 +205,132 @@ public class ManagerLeaveScreen extends JFrame {
 
         setFontAndColor(mFont, mColor);
 
+
+        //add action
+        lbCalendar.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                CalendarProgram cp =  CalendarProgram.getInstance();
+            }
+
+        });
+
+        lbChangePass.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                GUIManager.showScreenX(GUIManager.Screen.ChangePassScreen, null);
+            }
+
+        });
+
+        lbSignout.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                GUIManager.showScreenX(GUIManager.Screen.LoginScreen, null);
+            }
+
+        });
+        lbBack.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                GregorianCalendar cal = new GregorianCalendar(); //Create calendar
+                BusinessProcessing bp = business.BusinessProcessing.getInstance();
+                int realYear = cal.get(GregorianCalendar.YEAR);
+                if (bp.isSuperior()) {
+
+                    GUIManager.showScreenX(GUIManager.Screen.MainAprroverScreen, bp.viewLeaves(realYear));
+                } else {
+                    GUIManager.showScreenX(GUIManager.Screen.MainScreen, bp.viewLeaves(realYear));
+                }
+            }
+        });
+
+         lbViewReport.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                GregorianCalendar cal = new GregorianCalendar(); //Create calendar
+                BusinessProcessing bp = business.BusinessProcessing.getInstance();
+                int realYear = cal.get(GregorianCalendar.YEAR);
+                GUIManager.showScreenX(GUIManager.Screen.ReportScreen,bp.viewReport(realYear));
+            }
+
+        });
+
+        lbList.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                BusinessProcessing bp = business.BusinessProcessing.getInstance();
+
+                GUIManager.showScreenX(GUIManager.Screen.ListEmployeeScreen, bp.viewSubordinateList());
+            }
+
+
+        });
+
+        table.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                 GregorianCalendar cal = new GregorianCalendar(); //Create calendar
+                BusinessProcessing bp = business.BusinessProcessing.getInstance();
+                int realYear = cal.get(GregorianCalendar.YEAR);
+                 //table
+                 int row = table.getSelectedRow();
+                 int userid = Integer.parseInt(String.valueOf(table.getValueAt(row, 1)));
+
+                 Vector vt = bp.viewSubordinateDetail(userid, realYear);
+               
+                 String strTotalDay = "Total Leave Day "  ;
+                 String strRemainDay = "Remain Leave Day ";
+                 String strCode = "Code ";
+                 String strName = "Name ";
+                 
+                 lbCode.setText(strCode+ vt.get(1));
+                 lbFullName.setText(strName+ vt.get(0));
+                 lbTotalDay.setText(strTotalDay+ vt.get(2));
+                 lbRemainDay.setText(strRemainDay+ vt.get(3));
+
+                 if(e.getClickCount()==2){
+                     int leaveId = Integer.parseInt(String.valueOf(table.getValueAt(row, 0)));
+                    GUIManager.showScreenX(GUIManager.Screen.ViewLeaveScreen, bp.viewDetailOfLeave(leaveId));
+                 }
+//                 Vector vt =  bp.;
+//                 lbTotalDay.setText(strTotalDay + vt.get(0));
+//                 lbRemainDay.setText(strRemainDay + vt.get(1));
+
+            }
+
+        });
+
+        lbApprove.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                int row = table.getSelectedRow();
+                 int leaveId = Integer.parseInt(String.valueOf(table.getValueAt(row, 0)));
+                 BusinessProcessing bp = business.BusinessProcessing.getInstance();
+                 bp.updateLeaveStatus(leaveId, true);
+            }
+
+        });
+
+        lbReject.addMouseListener(new MouseAdapter() {
+           @Override
+            public void mouseReleased(MouseEvent e) {
+                int row = table.getSelectedRow();
+                 int leaveId = Integer.parseInt(String.valueOf(table.getValueAt(row, 0)));
+                 BusinessProcessing bp = business.BusinessProcessing.getInstance();
+                 bp.updateLeaveStatus(leaveId, false);
+            }
+        });
+
+
     }
 
     private void setFontAndColor(Font f, Color c) {
@@ -248,6 +370,6 @@ public class ManagerLeaveScreen extends JFrame {
 
     public static void main(String[] avg) {
         //  new LoginScreen();
-        new ManagerLeaveScreen();
+        new ManagerLeaveScreen(null);
     }
 }
