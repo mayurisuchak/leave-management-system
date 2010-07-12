@@ -274,6 +274,32 @@ public class DataAccess {
 
     }
 
+     //add new user
+    public int createUser(String username, int password, String fullname, int joinYear, int superiorID,	int position){
+        ArrayList<Object> paramList = new ArrayList<Object>();
+        paramList.add(username);
+        paramList.add(password);
+        paramList.add(fullname);
+        paramList.add(joinYear);
+        paramList.add(superiorID);
+        paramList.add(position);
+        return db.queryUpdate("EXEC sp_AddNewUser ?,?,?,?,?,?", paramList);
+    }
+
+    //add new holiday
+    public int createNewHoliday(Date date, String name){
+        ArrayList<Object> paramList = new ArrayList<Object>();
+        paramList.add(date);
+        paramList.add(name);
+        return db.queryUpdate("EXEC sp_AddHoliday ?,?", paramList);
+    }
+
+    //remove new holiday
+    public int removeHoliday(Date date){
+        ArrayList<Object> paramList = new ArrayList<Object>();
+        paramList.add(date);
+        return db.queryUpdate("EXEC sp_RemoveCalendar ?", paramList);
+    }
 
     public void close(){
         db.close();
