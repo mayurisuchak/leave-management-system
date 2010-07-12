@@ -31,7 +31,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class MainScreen extends JFrame {
 
-    private static int MY_HEIGHT = 385;
+    private static int MY_HEIGHT = 412;
     private static int MY_WIDTH = 620;
     private JLabel topPanel;
     private JLabel botPanel;
@@ -52,12 +52,11 @@ public class MainScreen extends JFrame {
     private Font mFont;
     private Color mColor;
     private JLabel lbSpectator;
-  //  private JLabel lbTable;
+    //  private JLabel lbTable;
     private JLabel lbViewReport;
     private JComboBox cbYear;
     private JScrollPane spTable;
-
-      DataObject data;
+    DataObject data;
     private String strTotalDay;
     private String strRemainDay;
     //  private JLabel lpanel;
@@ -70,7 +69,7 @@ public class MainScreen extends JFrame {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        final ImageIcon imgBG = new ImageIcon("src/resource/bg.jpg");
+        final ImageIcon imgBG = new ImageIcon("src/resource/bg2.jpg");
         init();
         panel = new JPanel() {
 
@@ -88,7 +87,7 @@ public class MainScreen extends JFrame {
         setBounds(300, 200, MY_WIDTH, MY_HEIGHT);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
-       // table.setModel(data);
+        // table.setModel(data);
     }
 
     private void init() {
@@ -104,7 +103,7 @@ public class MainScreen extends JFrame {
         ImageIcon imgBtCancel = new ImageIcon(strUrl + "btn_requestCancel.png");
         ImageIcon imgTabel = new ImageIcon(strUrl + "mainTable.png");
 
-         BusinessProcessing bp = business.BusinessProcessing.getInstance();
+        BusinessProcessing bp = business.BusinessProcessing.getInstance();
         lbViewReport = new JLabel("View Report");
         lbCalendar = new JLabel("Calendar");
         lbChangePass = new JLabel("Change Password");
@@ -119,15 +118,15 @@ public class MainScreen extends JFrame {
         lbUsername.setFont(new Font("tahoma", Font.ITALIC | Font.BOLD, 11));
         lbUsername.setForeground(new Color(0, 0, 255));
         cbYear = new JComboBox(bp.getYearList(bp.getUserID()));
-        cbYear.setSelectedIndex(cbYear.getItemCount()-1);
-       
+        cbYear.setSelectedIndex(cbYear.getItemCount() - 1);
 
-         strTotalDay = lbTotalDay.getText();
+
+        strTotalDay = lbTotalDay.getText();
         strRemainDay = lbRemainDay.getText();
-       
+
         table = new JTable(data);
-        spTable = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-      //  table.setOpaque(false);
+        spTable = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        //  table.setOpaque(false);
 
 
         topPanel = new JLabel(imgTop);
@@ -135,12 +134,12 @@ public class MainScreen extends JFrame {
         lbSpectator = new JLabel(imgSpectator);
         lbApplyLeave = new JLabel(imgBtApply);
         lbRqCancel = new JLabel(imgBtCancel);
-      //  lbTable = new JLabel(imgTabel);
+        //  lbTable = new JLabel(imgTabel);
         // lpanel = new JLabel(imgLpanel);
 
         // lpanel.setBounds(5, 80, imgLpanel.getIconWidth(), imgLpanel.getIconHeight()-50);
         topPanel.setBounds(0, 0, imgTop.getIconWidth(), imgTop.getIconHeight());
-        botPanel.setBounds(0, 335, imgBot.getIconWidth(), imgBot.getIconHeight());
+        botPanel.setBounds(0, 360, imgBot.getIconWidth(), imgBot.getIconHeight());
         lbSpectator.setBounds(0, 75, imgSpectator.getIconWidth(), imgSpectator.getIconHeight());
         lbCalendar.setBounds(5, 50, 50, 14);
         lbChangePass.setBounds(lbCalendar.getX() + 60, lbCalendar.getY(), 100, 14);
@@ -148,19 +147,19 @@ public class MainScreen extends JFrame {
         lbLogin.setBounds(3 * MY_WIDTH / 4, lbCalendar.getY(), 100, 14);
         lbUsername.setBounds(lbLogin.getX() + 50, lbCalendar.getY(), 100, 14);
         lbSignout.setBounds(MY_WIDTH - 50, lbCalendar.getY(), 100, 14);
-        lbTotalDay.setBounds(10, 100, 150, 14);
+        lbTotalDay.setBounds(10, 105, 150, 14);
         lbRemainDay.setBounds(lbTotalDay.getX(), lbTotalDay.getY() + 20, 150, 14);
         lbYear.setBounds(lbTotalDay.getX(), lbRemainDay.getY() + 20, 100, 14);
-        cbYear.setBounds(lbYear.getX()+40, lbYear.getY(), 50, 20);
-        spTable.setBounds(MY_WIDTH / 4 + 50, 80, 400, 200);
-       // lbTable.setBounds(table.getX(), table.getY(), table.getWidth(), table.getHeight());
+        cbYear.setBounds(lbYear.getX() + 40, lbYear.getY(), 50, 20);
+        spTable.setBounds(lbHelp.getX(), 85, 430, 200);
+        // lbTable.setBounds(table.getX(), table.getY(), table.getWidth(), table.getHeight());
         lbApplyLeave.setBounds(spTable.getX(), spTable.getY() + spTable.getHeight() + 10, imgBtApply.getIconWidth(), imgBtApply.getIconHeight());
         // lbApplyLeave.setBounds(table.getX(),table.getY() + table.getHeight() + 10, imgBtApply.getIconWidth(), imgBtApply.getIconHeight());
-      //  lbRqCancel.setBounds(100,0, imgBtCancel.getIconWidth(), imgBtCancel.getIconHeight());
-        lbRqCancel.setBounds(lbApplyLeave.getX()+100,lbApplyLeave.getY(), imgBtCancel.getIconWidth(), imgBtCancel.getIconHeight());
+        //  lbRqCancel.setBounds(100,0, imgBtCancel.getIconWidth(), imgBtCancel.getIconHeight());
+        lbRqCancel.setBounds(lbApplyLeave.getX() + 100, lbApplyLeave.getY(), imgBtCancel.getIconWidth(), imgBtCancel.getIconHeight());
 
-        
-        
+
+
         Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
         lbHelp.setCursor(cursor);
         lbCalendar.setCursor(cursor);
@@ -174,7 +173,7 @@ public class MainScreen extends JFrame {
         add(botPanel);
         //table and table background
         add(spTable);
-      //  add(lbTable);
+        //  add(lbTable);
         //add(lpanel);
 
         //add top function
@@ -189,29 +188,29 @@ public class MainScreen extends JFrame {
         // add left panel
         add(lbRemainDay);
         add(lbTotalDay);
-        add(cbYear);     
+        add(cbYear);
         add(lbYear);
 
         //add buttons
         add(lbApplyLeave);
         add(lbRqCancel);
-           // add(lbWithdraw);
+        // add(lbWithdraw);
 
         setFontAndColor(mFont, mColor);
 
         //init data
         initData();
-        
+
         //add action
         cbYear.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-               BusinessProcessing bp = business.BusinessProcessing.getInstance();
-               Vector vt =  bp.viewPersonalDetail(Integer.parseInt(cbYear.getSelectedItem().toString()));
-               lbTotalDay.setText(strTotalDay + vt.get(0));
-               lbRemainDay.setText(strRemainDay + vt.get(1));
-               data = bp.viewLeaves(Integer.parseInt(cbYear.getSelectedItem().toString()));
-               table.setModel(data);
+                BusinessProcessing bp = business.BusinessProcessing.getInstance();
+                Vector vt = bp.viewPersonalDetail(Integer.parseInt(cbYear.getSelectedItem().toString()));
+                lbTotalDay.setText(strTotalDay + vt.get(0));
+                lbRemainDay.setText(strRemainDay + vt.get(1));
+                data = bp.viewLeaves(Integer.parseInt(cbYear.getSelectedItem().toString()));
+                table.setModel(data);
 
             }
         });
@@ -220,9 +219,8 @@ public class MainScreen extends JFrame {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                CalendarProgram cp = new CalendarProgram();
+                CalendarProgram cp = CalendarProgram.getInstance();
             }
-
         });
 
         lbChangePass.addMouseListener(new MouseAdapter() {
@@ -231,7 +229,6 @@ public class MainScreen extends JFrame {
             public void mouseReleased(MouseEvent e) {
                 GUIManager.showScreenX(GUIManager.Screen.ChangePassScreen, null);
             }
-
         });
 
         lbApplyLeave.addMouseListener(new MouseAdapter() {
@@ -240,7 +237,6 @@ public class MainScreen extends JFrame {
             public void mouseReleased(MouseEvent e) {
                 GUIManager.showScreenX(GUIManager.Screen.AddNewScreen, null);
             }
-
         });
 
         lbSignout.addMouseListener(new MouseAdapter() {
@@ -249,21 +245,22 @@ public class MainScreen extends JFrame {
             public void mouseReleased(MouseEvent e) {
                 GUIManager.showScreenX(GUIManager.Screen.LoginScreen, null);
             }
-
         });
 
         lbRqCancel.addMouseListener(new MouseAdapter() {
+
             @Override
             public void mouseReleased(MouseEvent e) {
-                 BusinessProcessing bp = business.BusinessProcessing.getInstance();
-                 //table
-                 int row = table.getSelectedRow();
-                 int t = Integer.parseInt(String.valueOf(table.getValueAt(row, 0)));
-                 bp.removeLeave(t);
+                BusinessProcessing bp = business.BusinessProcessing.getInstance();
+                //table
+                int row = table.getSelectedRow();
+                
+                int t = Integer.parseInt(String.valueOf(table.getValueAt(row, 0)));
+
+                bp.removeLeave(t);
 
 
             }
-
         });
 
     }
@@ -297,18 +294,16 @@ public class MainScreen extends JFrame {
         lbYear.setForeground(c);
     }
 
-    private  void initData(){
-               BusinessProcessing bp = business.BusinessProcessing.getInstance();
-               Vector vt =  bp.viewPersonalDetail(Integer.parseInt(cbYear.getSelectedItem().toString()));
-               lbTotalDay.setText(strTotalDay + vt.get(0));
-               lbRemainDay.setText(strRemainDay + vt.get(1));
-               GUIManager.table = table;
+    private void initData() {
+        BusinessProcessing bp = business.BusinessProcessing.getInstance();
+        Vector vt = bp.viewPersonalDetail(Integer.parseInt(cbYear.getSelectedItem().toString()));
+        lbTotalDay.setText(strTotalDay + vt.get(0));
+        lbRemainDay.setText(strRemainDay + vt.get(1));
+        GUIManager.table = table;
 
     }
 
-   
-    public static void main(String[] avg){
-         new MainScreen(null);
+    public static void main(String[] avg) {
+        new MainScreen(null);
     }
-   
 }

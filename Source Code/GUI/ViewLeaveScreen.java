@@ -4,6 +4,7 @@
  */
 package GUI;
 
+import data.DataObject;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -22,7 +23,7 @@ import javax.swing.UIManager;
  */
 public class ViewLeaveScreen extends JFrame {
 
-    private static int MY_HEIGHT = 385;
+    private static int MY_HEIGHT = 412;
     private static int MY_WIDTH = 620;
     private JLabel topPanel;
     private JLabel botPanel;
@@ -34,15 +35,16 @@ public class ViewLeaveScreen extends JFrame {
     private JLabel lbToDate;
     private JLabel lbAddress;
     private JLabel lbStatus;
-
     private JTextField tfSubject;
     private JTextArea taReason;
     private JTextField tfFromDate;
     private JTextField tfToDate;
     private JTextArea taAddress;
     private JTextField tfStatus;
+    private DataObject data;
 
-    public ViewLeaveScreen() {
+    public ViewLeaveScreen(DataObject data) {
+        this.data = data;
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
@@ -75,7 +77,7 @@ public class ViewLeaveScreen extends JFrame {
         ImageIcon imgTop = new ImageIcon(strUrl + "top.png");
         ImageIcon imgBot = new ImageIcon(strUrl + "bottom.png");
         ImageIcon imgSpectator = new ImageIcon(strUrl + "line.png");
-   
+
 
 
 
@@ -88,7 +90,7 @@ public class ViewLeaveScreen extends JFrame {
         topPanel = new JLabel(imgTop);
         botPanel = new JLabel(imgBot);
         lbSpectator = new JLabel(imgSpectator);
-       
+
 
 
         lbSubject = new JLabel("Subject");
@@ -100,14 +102,20 @@ public class ViewLeaveScreen extends JFrame {
         //lbAddress.setText();
 
         tfSubject = new JTextField();
+        tfSubject.setEditable(false);
         taReason = new JTextArea(30, 50);
+        taReason.setEditable(false);
         tfFromDate = new JTextField();
+        tfFromDate.setEditable(false);
         tfToDate = new JTextField();
+        tfToDate.setEditable(false);
         taAddress = new JTextArea(30, 50);
+        taAddress.setEditable(false);
         tfStatus = new JTextField();
+        tfStatus.setEditable(false);
 
         topPanel.setBounds(0, 0, imgTop.getIconWidth(), imgTop.getIconHeight());
-        botPanel.setBounds(0, 335, imgBot.getIconWidth(), imgBot.getIconHeight());
+        botPanel.setBounds(0, 360, imgBot.getIconWidth(), imgBot.getIconHeight());
         temp.setBounds(5, 50, 100, 13);
         lbSpectator.setBounds(0, 75, imgSpectator.getIconWidth(), imgSpectator.getIconHeight());
         lbSubject.setBounds(5, lbSpectator.getY() + 25, 150, 14);
@@ -115,18 +123,18 @@ public class ViewLeaveScreen extends JFrame {
         lbFromDate.setBounds(MY_WIDTH / 2, lbSubject.getY(), 150, 14);
         lbToDate.setBounds(lbFromDate.getX(), lbFromDate.getY() + 30, 150, 14);
         lbAddress.setBounds(lbToDate.getX(), lbToDate.getY() + 30, 150, 28);
-        lbStatus.setBounds(lbAddress.getX(), lbAddress.getY()+100, 150, 14);
+        lbStatus.setBounds(lbAddress.getX(), lbAddress.getY() + 100, 150, 14);
 
         tfSubject.setBounds(lbSubject.getX() + 110, lbSubject.getY(), 150, 20);
         taReason.setBounds(lbReason.getX() + 110, lbReason.getY(), 150, 80);
         tfFromDate.setBounds(lbFromDate.getX() + 110, lbFromDate.getY(), 150, 20);
         tfToDate.setBounds(lbToDate.getX() + 110, lbToDate.getY(), 150, 20);
         taAddress.setBounds(lbAddress.getX() + 110, lbAddress.getY(), 150, 80);
-        tfStatus.setBounds(lbStatus.getX()+110, lbStatus.getY(), 150, 20);
+        tfStatus.setBounds(lbStatus.getX() + 110, lbStatus.getY(), 150, 20);
         taAddress.setLineWrap(true);
         taReason.setLineWrap(true);
         tfStatus.setEditable(false);
-       
+
 
         add(topPanel);
         add(botPanel);
@@ -146,7 +154,8 @@ public class ViewLeaveScreen extends JFrame {
         add(taAddress);
         add(taReason);
         add(tfStatus);
-    
+        initData();
+
 
         setFontAndColor(f, c);
     }
@@ -154,7 +163,7 @@ public class ViewLeaveScreen extends JFrame {
     private void setFontAndColor(Font f, Color c) {
 
         tfStatus.setFont(f);
-        tfStatus.setForeground(c);
+       
         lbStatus.setFont(f);
         lbStatus.setForeground(c);
 
@@ -176,7 +185,21 @@ public class ViewLeaveScreen extends JFrame {
         lbAddress.setForeground(c);
     }
 
+    private void initData() {
+        if (data == null) {
+            return;
+        } else {
+            tfSubject.setText(data.getValueAt(0, 0).toString());
+            tfFromDate.setText(data.getValueAt(0, 2).toString());
+            tfToDate.setText(data.getValueAt(0, 3).toString());
+            taReason.setText(data.getValueAt(0, 1).toString());
+            taAddress.setText(data.getValueAt(0, 4).toString());
+            tfStatus.setText(data.getValueAt(0, 5).toString());
+            //System.out.println(data.getValueAt(0, 5).toString());
+        }
+    }
+
     public static void main(String[] avg) {
-        new ViewLeaveScreen();
+        new ViewLeaveScreen(null);
     }
 }

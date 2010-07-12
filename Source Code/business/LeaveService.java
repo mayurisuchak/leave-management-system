@@ -97,27 +97,9 @@ class LeaveService {
     /**
      * view detail of leave: 0->[Subject], 1->[Reason], 2->DateStart, 3->DateEnd, 4->Communication, 5->[Status]
      */
-    public ArrayList<String> viewDetailOfLeave(int leaveID){
-            ArrayList<String> arrayList = new ArrayList<String>();
-            RowSet rs = da.viewDetailOfLeave(leaveID);
-        try {
-            if (rs.first()) {
-                arrayList.add(rs.getString(1));
-                arrayList.add(rs.getString(2));
-                arrayList.add(rs.getString(3));
-                arrayList.add(rs.getString(4));
-                arrayList.add(rs.getString(5));
-                arrayList.add(rs.getString(6));
-            }else{
-                for(int i = 0; i < 6; i++)
-                    arrayList.add("null");
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-
-            return arrayList;
-        }
+    public DataObject viewDetailOfLeave(int leaveID){
+        return new DataObject(da.viewDetailOfLeave(leaveID));
+        
     }
 
     /**
@@ -165,6 +147,26 @@ class LeaveService {
         try {
             RowSet rs = da.viewPersonalDetail(userID, year);
             rs.first();
+            list.add(rs.getString(3));
+            list.add(rs.getString(4));
+        } catch (SQLException ex) {
+            list.add("error");
+            list.add("error");
+        }finally{
+            return list;
+        }
+    }
+    
+    /**
+     * view subordinate detail : [Code], [Name],[Total leave Days], [Remaining leave days]
+     */
+    public Vector<String> viewSubordinateDetail(int userID, int year){
+        Vector<String> list = new Vector<String>();
+        try {
+            RowSet rs = da.viewPersonalDetail(userID, year);
+            rs.first();
+            list.add(rs.getString(1));
+            list.add(rs.getString(2));
             list.add(rs.getString(3));
             list.add(rs.getString(4));
         } catch (SQLException ex) {

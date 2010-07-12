@@ -26,7 +26,7 @@ import javax.swing.UIManager;
  */
 public class ChangePassScreen extends JFrame {
 
-    private static int MY_HEIGHT = 385;
+    private static int MY_HEIGHT = 412;
     private static int MY_WIDTH = 620;
     private JLabel topPanel;
     private JLabel botPanel;
@@ -93,7 +93,7 @@ public class ChangePassScreen extends JFrame {
         tfConfirmPass = new JPasswordField();
 
         topPanel.setBounds(0, 0, imgTop.getIconWidth(), imgTop.getIconHeight());
-        botPanel.setBounds(0, 335, imgBot.getIconWidth(), imgBot.getIconHeight());
+        botPanel.setBounds(0, 360, imgBot.getIconWidth(), imgBot.getIconHeight());
         lbOldPass.setBounds(MY_WIDTH / 4, MY_HEIGHT / 3, 100, 13);
         //System.out.print(lbOldPass.getY());
         tfOldPass.setBounds(lbOldPass.getX() + 150, lbOldPass.getY(), 150, 20);

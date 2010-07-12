@@ -34,7 +34,7 @@ class RequestService {
     public DataObject viewSubmittedLeave(int superiorID){
         Calendar calendar = Calendar.getInstance();
         int currentYear = calendar.get(Calendar.YEAR);
-        RowSet rs = da.viewSubmittedLeave(superiorID, currentYear);
+        RowSet rs = da.viewSubmittedLeaves(superiorID, currentYear);
         return new DataObject(rs);
     }
 

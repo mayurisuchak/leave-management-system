@@ -17,7 +17,7 @@ import java.text.DateFormat;
 import java.util.*;
 
 public class CalendarProgram {
-
+    public static CalendarProgram me = null;
     static JLabel lblMonth, lblYear;
     static JButton btnPrev, btnNext;
     static JTable tblCalendar;
@@ -29,7 +29,16 @@ public class CalendarProgram {
     static JPanel pnlCalendar;
     static int realYear, realMonth, realDay, currentYear, currentMonth;
 
-    public CalendarProgram() {
+    public static CalendarProgram getInstance(){
+        if(me==null){
+            me = new CalendarProgram();
+        }else{
+            me.frmMain.dispose();
+            me = new CalendarProgram();
+        }
+        return me;
+    }
+    private CalendarProgram() {
         //Look and feel
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -118,6 +127,7 @@ public class CalendarProgram {
         //Make frame visible
         frmMain.setResizable(false);
         frmMain.setVisible(true);
+        frmMain.setBounds(300, 200,320, 335);
 
 
         //Get real month/year

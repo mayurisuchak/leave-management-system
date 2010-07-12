@@ -194,8 +194,13 @@ public class BusinessProcessing {
                         logService.createLog(userID, LogService.LOG_ACTION_CANCELATION_REQUEST, leaveID);
                     }
                     //refresh table
+                    GregorianCalendar cal = new GregorianCalendar(); //Create calendar
+
+                    int realYear = cal.get(GregorianCalendar.YEAR);
+                    GUIManager.table.clearSelection();
+                    GUIManager.table.setModel(viewLeaves(realYear));
                 } else {
-                    //guiMan.showMessage("Failed to withdraw/canceled leave.");
+                    GUIManager.showMessageX("Failed to withdraw/canceled leave.");
                 }
             }
         };
@@ -214,15 +219,13 @@ public class BusinessProcessing {
                 @Override
                 public void run() {
                     int joinYear = leaveService.viewJoinYear(userID);
-                    if(joinYear>0)
-                    {
+                    if (joinYear > 0) {
                         Calendar calendar = Calendar.getInstance();
                         int currentYear = calendar.get(Calendar.YEAR);
                         for (int i = joinYear; i <= currentYear; i++) {
                             list.add(Integer.toString(i));
                         }
-                    }
-                    else{
+                    } else {
                         list.add("error");
                     }
                 }
@@ -269,6 +272,34 @@ public class BusinessProcessing {
 
     /**
      *
+     * get personal information in a specific year: [Total leave Days], [Remaining leave days]
+     *
+     */
+    public Vector<String> viewSubordinateDetail(final int userID,final int year) {
+        final Vector<String> list = new Vector<String>();
+        try {
+            thread = new Thread() {
+
+                @Override
+                public void run() {
+                    list.addAll(leaveService.viewSubordinateDetail(userID, year));
+
+                }
+            };
+            thread.start();
+            // pause main thread execution
+            while (thread.isAlive()) {
+                thread.join(1000);
+            }
+            return list;
+        } catch (InterruptedException ex) {
+            return list;
+        }
+
+    }
+
+    /**
+     *
      * view leave history
      *
      */
@@ -296,26 +327,25 @@ public class BusinessProcessing {
     /**
      * view detail of leave: 0->[Subject], 1->[Reason], 2->DateStart, 3->DateEnd, 4->Communication, 5->[Status]
      */
-    public Vector<String> viewDetailOfLeave(final int leaveID) {
-        final Vector<String> list = new Vector<String>();
-        try {
-            thread = new Thread() {
+    public DataObject viewDetailOfLeave(final int leaveID) {
+         thread = new Thread() {
 
-                @Override
-                public void run() {
-                    list.addAll(leaveService.viewDetailOfLeave(leaveID));
-
-                }
-            };
-            thread.start();
-            // pause main thread execution
-            while (thread.isAlive()) {
-                thread.join(1000);
+            @Override
+            public void run() {
+                dataObject = leaveService.viewDetailOfLeave(leaveID);
             }
-            return list;
-        } catch (InterruptedException ex) {
-            return list;
+        };
+        thread.start();
+        // pause main thread execution
+        while (thread.isAlive()) {
+            try {
+                thread.join(1000);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+                return null;
+            }
         }
+        return dataObject;
     }
 
     /*********************************************************************************************
@@ -362,17 +392,17 @@ public class BusinessProcessing {
                     int check = requestService.checkUpdateLeaveStatus(leaveID);
                     if (check == -1) {
                         logService.createLog(userID, LogService.LOG_ACTION_LEAVE_APPROVAL, leaveID);
-                    } else if(check == -2){
+                    } else if (check == -2) {
                         logService.createLog(userID, LogService.LOG_ACTION_LEAVE_REJECTION, leaveID);
-                    }else if (check == 1) {
+                    } else if (check == 1) {
                         logService.createLog(userID, LogService.LOG_ACTION_CANCEL_APPROVAL, leaveID);
-                    } else if(check == 2){
+                    } else if (check == 2) {
                         logService.createLog(userID, LogService.LOG_ACTION_CANCEL_REJECTION, leaveID);
                     }
-                    //guiMan.showMessage("Update successfull!");
-                    //guiMan.refreshTable();
+                    GUIManager.showMessageX("Update successfull!");
+                    
                 } else {
-                    //guiMan.showMessage("Failed to aprrove(reject) selected leave(request)!");
+                   GUIManager.showMessageX("Failed to aprrove(reject) selected leave(request)!");
                 }
             }
         };

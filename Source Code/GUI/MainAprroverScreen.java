@@ -4,11 +4,9 @@
  */
 package GUI;
 
-import GUI.CalendarProgram;
 import business.BusinessProcessing;
 import data.DataObject;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -19,14 +17,12 @@ import java.awt.event.MouseEvent;
 import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
-import javax.swing.table.TableCellRenderer;
 
 /**
  *
@@ -34,7 +30,7 @@ import javax.swing.table.TableCellRenderer;
  */
 public class MainAprroverScreen extends JFrame {
 
-    private static int MY_HEIGHT = 385;
+    private static int MY_HEIGHT = 412;
     private static int MY_WIDTH = 620;
     private JLabel topPanel;
     private JLabel botPanel;
@@ -75,7 +71,7 @@ public class MainAprroverScreen extends JFrame {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        final ImageIcon imgBG = new ImageIcon("src/resource/bg.jpg");
+        final ImageIcon imgBG = new ImageIcon("src/resource/bg2.jpg");
         init();
 
         panel = new JPanel() {
@@ -147,7 +143,7 @@ public class MainAprroverScreen extends JFrame {
 
         // lpanel.setBounds(5, 80, imgLpanel.getIconWidth(), imgLpanel.getIconHeight()-50);
         topPanel.setBounds(0, 0, imgTop.getIconWidth(), imgTop.getIconHeight());
-        botPanel.setBounds(0, 335, imgBot.getIconWidth(), imgBot.getIconHeight());
+        botPanel.setBounds(0, 360, imgBot.getIconWidth(), imgBot.getIconHeight());
         lbSpectator.setBounds(0, 75, imgSpectator.getIconWidth(), imgSpectator.getIconHeight());
         lbCalendar.setBounds(5, 50, 50, 14);
         lbChangePass.setBounds(lbCalendar.getX() + 60, lbCalendar.getY(), 100, 14);
@@ -155,13 +151,13 @@ public class MainAprroverScreen extends JFrame {
         lbLogin.setBounds(3 * MY_WIDTH / 4, lbCalendar.getY(), 100, 14);
         lbUsername.setBounds(lbLogin.getX() + 50, lbCalendar.getY(), 100, 14);
         lbSignout.setBounds(MY_WIDTH - 50, lbCalendar.getY(), 100, 14);
-        lbViewReport.setBounds(10, 100, 100, 14);
-        lbSmallSpector.setBounds(5, lbViewReport.getY() + 20, 100, imgSpectator.getIconHeight());
+        lbViewReport.setBounds(10, 105, 100, 14);
+        lbSmallSpector.setBounds(6, lbViewReport.getY() + 20, 155, imgSpectator.getIconHeight());
         lbTotalDay.setBounds(lbViewReport.getX(), lbSmallSpector.getY() + 5, 150, 14);
         lbRemainDay.setBounds(lbTotalDay.getX(), lbTotalDay.getY() + 20, 150, 14);
         lbYear.setBounds(lbTotalDay.getX(), lbRemainDay.getY() + 20, 100, 14);
         cbYear.setBounds(lbYear.getX() + 40, lbYear.getY(), 50, 20);
-        spTable.setBounds(MY_WIDTH / 4 + 50, 80, 400, 200);
+        spTable.setBounds(lbHelp.getX(), 85, 430, 200);
         // lbTable.setBounds(table.getX(), table.getY(), table.getWidth(), table.getHeight());
         lbApplyLeave.setBounds(spTable.getX(), spTable.getY() + spTable.getHeight() + 10, imgBtApply.getIconWidth(), imgBtCancel.getIconHeight());
         lbRqCancel.setBounds(lbApplyLeave.getX() + 90, lbApplyLeave.getY() - 30, imgBtCancel.getIconWidth(), imgBtCancel.getIconWidth());
@@ -232,7 +228,7 @@ public class MainAprroverScreen extends JFrame {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                CalendarProgram cp = new CalendarProgram();
+                CalendarProgram cp = CalendarProgram.getInstance();
             }
 
         });
@@ -269,10 +265,30 @@ public class MainAprroverScreen extends JFrame {
             public void mouseReleased(MouseEvent e) {
                  BusinessProcessing bp = business.BusinessProcessing.getInstance();
                  //table
-                 int row = table.getSelectedRow();
+                 int row = table.getSelectedRow();                
                  int t = Integer.parseInt(String.valueOf(table.getValueAt(row, 0)));
-                 System.out.println(t);
+                 bp.removeLeave(t);
 
+            }
+
+        });
+
+        lbManagerLeave.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                BusinessProcessing bp = business.BusinessProcessing.getInstance();
+                GUIManager.showScreenX(GUIManager.Screen.ManagerLeaveScreen,bp.viewSubmittedLeaves());
+            }
+
+        });
+
+        lbViewReport.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                BusinessProcessing bp = business.BusinessProcessing.getInstance();
+                GUIManager.showScreenX(GUIManager.Screen.ReportScreen,bp.viewReport(Integer.parseInt(cbYear.getSelectedItem().toString())));
             }
 
         });
