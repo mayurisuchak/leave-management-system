@@ -33,8 +33,8 @@ GO
 CREATE TABLE Leave(
 	LeaveID INT IDENTITY,
 	UserID INT NOT NULL,
-	DateStart DATETIME NOT NULL,
-	DateEnd DATETIME NOT NULL,
+	DateStart SMALLDATETIME NOT NULL,
+	DateEnd SMALLDATETIME NOT NULL,
 	[State] VARCHAR(30) NOT NULL,	/* 'Not Approved', 'Approved', 'Rejected', 'Withdrawed', 'Canceling', 'Cancel-Rejected', 'Canceled' */
 	Reason VARCHAR(100) NOT NULL,
 	Communication VARCHAR(50) NOT NULL,
@@ -54,6 +54,13 @@ CREATE TABLE [Log](
 	CONSTRAINT PK_Log_LogID PRIMARY KEY (LogID),
 	CONSTRAINT FR_Log_UserID FOREIGN KEY (UserID) REFERENCES [User](UserID),
 	CONSTRAINT FR_Log_LeaveID FOREIGN KEY (LeaveID) REFERENCES Leave(LeaveID)
+)
+GO
+/* Create table PublicHoliday *************************************************************************/
+CREATE TABLE PublicHoliday(
+	[Day] SMALLDATETIME NOT NULL,
+	[Name] VARCHAR(30) NOT NULL
+	CONSTRAINT PK_PublicHoliday_Day PRIMARY KEY ([Day])
 )
 GO
 /*************************************************************************** Create View **************************************************************************/
@@ -128,8 +135,8 @@ GO
 /* Create procedure view log detail ********************************************************/
 CREATE PROCEDURE sp_LogDetailDuration
 	@UserID INT,
-	@DateStart DATETIME,
-	@DateEnd DATETIME
+	@DateStart SMALLDATETIME,
+	@DateEnd SMALLDATETIME
 AS
 SELECT [Time], Username, [Action]
 	FROM LogDetail
@@ -224,6 +231,46 @@ SELECT [State]
 	WHERE LeaveID = @LeaveID
 GO
 /*************************************************************************** Create Procedure Modify **************************************************************************/
+/* Create procedure insert new user *********************************************************/
+CREATE PROCEDURE sp_AddNewUser
+	@Username INT,
+	@Password VARCHAR(50),
+	@Fullname VARCHAR(50),
+	@JoinYear INT,
+	@SuperiorID INT,
+	@Position INT
+AS
+INSERT INTO [User] 
+	VALUES(
+		@Username,
+		@Password,
+		@Fullname,
+		@JoinYear,
+		@SuperiorID,
+		@Position
+	)
+GO
+/* Create procedure add holiday *********************************************************/
+CREATE PROCEDURE sp_AddHoliday
+	@Date SMALLDATETIME,
+	@Name VARCHAR(50)
+AS
+INSERT INTO PublicHoliday
+	VALUES(
+		@Date,
+		@Name
+	)
+GO
+
+/* Create procedure remove holiday *********************************************************/
+CREATE PROCEDURE sp_RemoveCalendar
+	@Date SMALLDATETIME
+AS
+DELETE 
+	FROM PublicHoliday
+	WHERE [Day] = @Date
+GO
+
 /* Create procedure change password *********************************************************/
 CREATE PROCEDURE sp_ChangePassword 
 	@UserID INT,
@@ -252,8 +299,8 @@ GO
 /* Create procedure create new leave application ********************************************/
 CREATE PROCEDURE sp_ApplyLeave
 	@UserID INT,
-	@DateStart DATETIME,
-	@DateEnd DATETIME,
+	@DateStart SMALLDATETIME,
+	@DateEnd SMALLDATETIME,
 	@Reason VARCHAR(100),
 	@Communication VARCHAR(50),
 	@Date DATETIME,
