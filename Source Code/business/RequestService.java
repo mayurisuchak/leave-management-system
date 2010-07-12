@@ -9,6 +9,7 @@ import data.DataAccess;
 import data.DataObject;
 import java.util.Calendar;
 import javax.sql.RowSet;
+import java.util.Date;
 
 /**
  *
@@ -60,5 +61,26 @@ class RequestService {
      */
     public int checkUpdateLeaveStatus(int leaveID){
         return da.checkUpdateLeaveStatus(leaveID);
+    }
+
+    /**
+     * add new user and return: 1 if ok
+     */
+    public int createUser(String username, int password, String fullname, int joinYear, int superiorID,	int position){
+        return da.createUser( username, password, fullname, joinYear, superiorID, position);
+    }
+
+    /**
+     * add new holiday and return: 1 if ok
+     */
+    public int createNewHoliday(Date date, String name){
+        return da.createNewHoliday( date, name);
+    }
+
+    /**
+     * delete existing holiday and return: 1 if ok
+     */
+    public int removeHoliday(Date date){
+        return da.removeHoliday(date);
     }
 }

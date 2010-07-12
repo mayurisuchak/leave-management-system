@@ -148,8 +148,14 @@ public class BusinessProcessing {
                     DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
                     Date dateStart = df.parse(dateStartStr);
                     Date dateEnd = df.parse(dateEndStr);
+                    Date currDate = new Date();
                     if (dateStart.after(dateEnd)) {
                         GUIManager.showMessageX("Date start cannot be later than date end !");
+                        return;
+                    }
+
+                    if (currDate.after(dateStart)) {
+                        GUIManager.showMessageX("Date start cannot be earlier than current date !");
                         return;
                     }
                     if (leaveService.applyLeave(userID, dateStart, dateEnd, reason, communication, subject)) {
@@ -519,5 +525,40 @@ public class BusinessProcessing {
             }
         }
         return dataObject;
+    }
+
+    /**
+     * add new user and return: 1 if ok
+     */
+    public void createUser(String username, int password, String fullname, int joinYear, int superiorID,	int position){
+        if( requestService.createUser( username, password, fullname, joinYear, superiorID, position)>0){
+            //Create ok
+        }else{
+            //Create fail
+        }
+
+    }
+
+    /**
+     * add new holiday and return: 1 if ok
+     */
+    public void createNewHoliday(Date date, String name){
+        if(requestService.createNewHoliday(date, name)>0){
+            //create ok
+        }else{
+            // create fail
+        }
+
+    }
+
+    /**
+     * delete existing holiday and return: 1 if ok
+     */
+    public void removeHoliday(Date date){
+        if(requestService.removeHoliday(date)>0){
+            //delete ok
+        }else{
+            //create fail
+        }
     }
 }
