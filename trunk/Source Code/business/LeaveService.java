@@ -158,7 +158,7 @@ class LeaveService {
     }
     
     /**
-     * view subordinate detail : [Code], [Name],[Total leave Days], [Remaining leave days]
+     * view subordinate detail : [Name], [Code],[Total leave Days], [Remaining leave days]
      */
     public Vector<String> viewSubordinateDetail(int userID, int year){
         Vector<String> list = new Vector<String>();
