@@ -1,0 +1,16 @@
+-- Don't change
+name = LMSPool
+maxPool = 20
+maxSize = 20
+idleTimeout = 2500
+driverUrl = com.microsoft.sqlserver.jdbc.SQLServerDriver
+url = jdbc:sqlserver://
+database = LeaveManagementSystem
+
+-- No need to change
+password = abcd1234A
+user = app
+
+-- Change according to your server configuration
+server = localhost
+port = 1433
