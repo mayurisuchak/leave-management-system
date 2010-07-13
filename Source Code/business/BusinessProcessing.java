@@ -530,7 +530,7 @@ public class BusinessProcessing {
     /**
      * add new user and return: 1 if ok
      */
-    public void createUser(String username, int password, String fullname, int joinYear, int superiorID,	int position){
+    public void createUser(String username, String password, String fullname, int joinYear, int superiorID,	int position){
         if( requestService.createUser( username, password, fullname, joinYear, superiorID, position)>0){
             //Create ok
         }else{
