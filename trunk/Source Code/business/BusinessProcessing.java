@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -506,12 +508,20 @@ public class BusinessProcessing {
      *
      * view log of userID form time to time
      */
-    public DataObject viewLogDetail(final int subordinateID, final Date dateStart, final Date dateEnd) {
+    public DataObject viewLogDetail(final int subordinateID, final String dateStartStr, final String dateEndStr) {
+
         thread = new Thread() {
 
             @Override
             public void run() {
-                dataObject = logService.viewLogDetail(subordinateID, dateStart, dateEnd);
+                try {
+                    DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
+                    Date dateStart = df.parse(dateStartStr);
+                    Date dateEnd = df.parse(dateEndStr);   
+                    dataObject = logService.viewLogDetail(subordinateID, dateStart, dateEnd);
+                } catch (ParseException ex) {
+                    ex.printStackTrace();
+                }
             }
         };
         thread.start();
