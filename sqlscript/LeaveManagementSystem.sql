@@ -152,7 +152,7 @@ CREATE PROCEDURE sp_LogDetailDuration
 AS
 SELECT [Time], Username, [Action]
 	FROM LogDetail
-	WHERE UserID = @UserID AND DATEDIFF(day, @DateStart, [Time]) > 0 AND DATEDIFF(day, [Time], @DateEnd) > 0
+	WHERE UserID = @UserID AND DATEDIFF(day, @DateStart, [Time]) >= 0 AND DATEDIFF(day, [Time], @DateEnd) >= 0
 UNION
 SELECT Time, Username, [Action]
 	FROM LogDetail
