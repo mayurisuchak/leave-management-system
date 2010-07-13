@@ -175,6 +175,12 @@ SELECT Name, [Total leave Days], [Total leave Days] AS [Remaining leave days]
 		WHERE SuperiorID = @SuperiorID AND [YEAR] = @Year
 	)
 GO
+/* Create procedure view position list *****************************************************/
+CREATE PROCEDURE sp_PostionList
+AS
+SELECT PositionID, PositionName
+	FROM Position
+GO
 /* Create procedure view list of subordinate ***********************************************/
 CREATE PROCEDURE sp_Subordinate
 	@SuperiorID INT
@@ -234,6 +240,14 @@ SELECT TOP 1 LeaveID
 	FROM Leave
 	WHERE UserID = @UserID
 	ORDER BY [Date] DESC
+GO
+/* Create procedure get username add by userid **********************************************************/
+CREATE PROCEDURE sp_GetUsername
+	@UserID INT
+AS
+SELECT Username
+	FROM [User]
+	WHERE UserID = @UserID
 GO
 /* Create procedure get leave status **********************************************************/
 CREATE PROCEDURE sp_GetLeaveStatus
