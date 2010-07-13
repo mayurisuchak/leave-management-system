@@ -77,7 +77,7 @@ AS
 SELECT [User].UserID, YEAR([Leave].DateStart) AS [Year], Leave.State, SUM(DATEDIFF(dy,DateStart,DateEnd)+1) AS LeaveDays
 	FROM [User] JOIN Leave ON ([User].UserID = Leave.UserID)
 	GROUP BY [User].UserID, YEAR([Leave].DateStart), Leave.State
-	HAVING [Leave].State = 'Approved'
+	HAVING [Leave].State = 'Approved' OR [Leave].State = 'Cancel-Rejected' OR [Leave].State = 'Canceling'
 GO
 /* Create view subordinate detail ***********************************************************/
 CREATE VIEW SubordinateDetail
@@ -260,7 +260,7 @@ GO
 /*************************************************************************** Create Procedure Modify **************************************************************************/
 /* Create procedure insert new user *********************************************************/
 CREATE PROCEDURE sp_AddNewUser
-	@Username INT,
+	@Username VARCHAR(30),
 	@Password VARCHAR(50),
 	@Fullname VARCHAR(50),
 	@JoinYear INT,
@@ -272,9 +272,9 @@ INSERT INTO [User]
 		@Username,
 		@Password,
 		@Fullname,
-		@JoinYear,
 		@SuperiorID,
-		@Position
+		@Position,
+		@JoinYear
 	)
 GO
 /* Create procedure add holiday *********************************************************/
@@ -350,10 +350,11 @@ CREATE PROCEDURE sp_CancelLeave
 	@LeaveID INT
 AS
 BEGIN
-UPDATE Leave
-	SET [State] = 'Withdrawed'
-	WHERE LeaveID = @LeaveID AND [State] = 'Not Approved'
-IF (@@ROWCOUNT = 0)
+IF EXISTS(SELECT LeaveID FROM Leave WHERE [State]='Not Approved')
+	UPDATE Leave
+		SET [State] = 'Withdrawed'
+		WHERE LeaveID = @LeaveID AND [State] = 'Not Approved'
+ELSE
 	UPDATE Leave
 		SET [State] = 'Canceling'
 		WHERE LeaveID = @LeaveID AND [State] = 'Approved'
@@ -365,16 +366,16 @@ CREATE PROCEDURE sp_ManageRequest
 	@Allowance BIT
 AS
 BEGIN
-IF (@Allowance = 1)
-	UPDATE Leave 
-		SET [State] = 'Approved'
-		WHERE LeaveID = @LeaveID AND [State] = 'Not Approved'
+IF EXISTS(SELECT LeaveID FROM Leave WHERE [State]='Not Approved')
+	IF (@Allowance = 1)
+		UPDATE Leave 
+			SET [State] = 'Approved'
+			WHERE LeaveID = @LeaveID AND [State] = 'Not Approved'
+	ELSE
+		UPDATE Leave 
+			SET [State] = 'Rejected'
+			WHERE LeaveID = @LeaveID AND [State] = 'Not Approved'
 ELSE
-	UPDATE Leave 
-		SET [State] = 'Rejected'
-		WHERE LeaveID = @LeaveID AND [State] = 'Not Approved'
-
-IF (@@ROWCOUNT = 0)
 	IF (@Allowance = 1)
 	UPDATE Leave 
 		SET [State] = 'Canceled'
