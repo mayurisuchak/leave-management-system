@@ -1,0 +1,15 @@
+Before using the system:
+    1. Run SQL script (if using DBServer, do this step on server):
+             - Run SQL Managerment Studio
+             - Open file LeaveManagementSystem.sql
+             - Run this script (press F5)
+             - Close SQL Management Studio
+    2. Configure property file (if using DBServer, use this step on client):
+             - Edit file properties.prop by Notepad
+             - Edit row: "server = localhost" to "server = ####" (#### is DBServer name)
+             - Edit row: "port = 1433" to "port = ####" (#### is the port that DBServer uses)
+             - Save this file and close
+
+Now, you can try our system by double click to the file: LeaveManagementSystem.jar
+
+Enjoy!!!
