@@ -7,6 +7,9 @@ package business;
 
 import data.DataAccess;
 import data.DataObject;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import javax.sql.RowSet;
 import java.util.Date;
@@ -66,8 +69,8 @@ class RequestService {
     /**
      * add new user and return: 1 if ok
      */
-    public int createUser(String username, int password, String fullname, int joinYear, int superiorID,	int position){
-        return da.createUser( username, password, fullname, joinYear, superiorID, position);
+    public int createUser(String username, String password, String fullname, int joinYear, int superiorID, int position){
+        return da.createUser( username, md5String(password), fullname, joinYear, superiorID, position);
     }
 
     /**
@@ -82,5 +85,27 @@ class RequestService {
      */
     public int removeHoliday(Date date){
         return da.removeHoliday(date);
+    }
+
+    /**
+ * md5 input string and return crypted string
+ */
+    private String md5String(String plaintext){
+        try {
+            // md5 password
+            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+            messageDigest.reset();
+            messageDigest.update(plaintext.getBytes());
+            byte[] digest = messageDigest.digest();
+            BigInteger bigInt = new BigInteger(1,digest);
+            String hashtext = bigInt.toString(16);
+            while(hashtext.length() < 32 ){
+                hashtext = "0" + hashtext;
+            }
+            return hashtext;
+        } catch (NoSuchAlgorithmException ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 }
