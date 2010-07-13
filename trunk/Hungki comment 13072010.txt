@@ -1,0 +1,13 @@
+Luc approve or reject thi ko thay doi statuso Manage reques
+Luc request cancel 1 leave da approved bi ra canh bao FAIL nhung luc vao nguoi quan ly thi van thay status la canceling
+Reject cung the
+
+****Noi chung la khi Approve, Reject hoac Request cancel thi deu ko thay doi status va canh bao' lung tung
+
+*****Tinh 1 ngay nghi la tu 10-7 den 10-7 hay tu 10-7 den 11-7?? Neu 10-7 den 11-7 duoc tinh la 2 ngay nghi thi co' 1 hien tuong:
+	- T cho 1 thang nghi tu 23-7 den 24-7: 2 ngay nghi va duoc approve
+	- sau do nghi tu 10-7 den 11-7: 2 ngay nghi va approve roi nhung request cancel va request day bi reject: tuc la van tinh so ngay nghi do
+	- nhung khi vao report cua manager thi van thay thang day remaining leave la 14/16 (dang ra phai la 12/16)
+
+Ko view details dc 1 leave
+Apply duoc trung ngay: apply 1 leave tu 22/7-25/7 nhung sau do van apply dc tu 23/7-24/7
