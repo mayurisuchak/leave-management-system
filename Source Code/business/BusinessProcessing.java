@@ -530,35 +530,113 @@ public class BusinessProcessing {
     /**
      * add new user and return: 1 if ok
      */
-    public void createUser(String username, String password, String fullname, int joinYear, int superiorID,	int position){
-        if( requestService.createUser( username, password, fullname, joinYear, superiorID, position)>0){
-            //Create ok
-        }else{
-            //Create fail
-        }
+    public void createUser(final String username, final String password, final String fullname, final int joinYear, final int superiorID, final int position){
+        thread = new Thread() {
+
+            @Override
+            public void run() {
+
+               if( requestService.createUser( username, password, fullname, joinYear, superiorID, position)>0){
+                    //Create ok
+                }else{
+                    //Create fail
+
+                }
+            }
+        };
+        thread.start();
 
     }
 
     /**
      * add new holiday and return: 1 if ok
      */
-    public void createNewHoliday(Date date, String name){
-        if(requestService.createNewHoliday(date, name)>0){
-            //create ok
-        }else{
-            // create fail
-        }
+    public void createNewHoliday(final Date date, final String name){
+        thread = new Thread() {
+
+            @Override
+            public void run() {
+
+                if(requestService.createNewHoliday(date, name)>0){
+                    //create ok
+                }else{
+                    // create fail
+                }
+            }
+        };
+        thread.start();
 
     }
 
     /**
      * delete existing holiday and return: 1 if ok
      */
-    public void removeHoliday(Date date){
-        if(requestService.removeHoliday(date)>0){
-            //delete ok
-        }else{
-            //create fail
+    public void removeHoliday(final Date date){
+
+         thread = new Thread() {
+
+            @Override
+            public void run() {
+
+                if(requestService.removeHoliday(date)>0){
+                    //delete ok
+                }else{
+                    //create fail
+                }
+            }
+        };
+        thread.start();
+    }
+
+    /**
+     *
+     * return list of superior: vector which one elem is: array of object: [1] -> id, [2]-> Fullname + Position
+     */
+    public Vector<Object[]> getSuperiorList() {
+        final Vector<Object[]> list = new Vector<Object[]>();
+        try {
+
+            thread = new Thread() {
+
+                @Override
+                public void run() {
+                    list.addAll( requestService.getSuperiorList());
+                }
+            };
+            thread.start();
+            // pause main thread execution
+            while (thread.isAlive()) {
+                thread.join(1000);
+            }
+            return list;
+        } catch (InterruptedException ex) {
+            return list;
+        }
+    }
+
+    /**
+     *
+     * return list of superior: vector which one elem is: array of object: [1] -> positionid, [2]-> position name
+     */
+    public Vector<Object[]> getPostionList() {
+        final Vector<Object[]> list = new Vector<Object[]>();
+        try {
+
+            thread = new Thread() {
+
+                @Override
+                public void run() {
+                    list.addAll( requestService.getPositionList());
+                }
+            };
+            thread.start();
+            // pause main thread execution
+            while (thread.isAlive()) {
+                thread.join(1000);
+            }
+            return list;
+        } catch (InterruptedException ex) {
+            return list;
         }
     }
 }
