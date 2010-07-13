@@ -7,7 +7,11 @@ package business;
 
 import data.DataAccess;
 import data.DataObject;
+import java.sql.SQLException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sql.RowSet;
 
 /**
  *
@@ -64,4 +68,23 @@ class LogService {
             return false;
     }
 
+    /**
+     * get username by userid
+     */
+    public String getUsername(int userID){
+        String username = "null";
+        try {            
+            RowSet rs = da.viewUsername(userID);
+            if (rs.first()) {
+                username = rs.getString(1);
+            } else {
+                username = "null";
+            }
+        } catch (SQLException ex) {
+            username = "null";
+        }  finally{
+            return username;
+        }
+
+    }
 }

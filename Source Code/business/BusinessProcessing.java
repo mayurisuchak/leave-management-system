@@ -278,7 +278,7 @@ public class BusinessProcessing {
 
     /**
      *
-     * get personal information in a specific year: [Total leave Days], [Remaining leave days]
+     * get personal information in a specific year: [Name], [Code], [Total leave Days], [Remaining leave days]
      *
      */
     public Vector<String> viewSubordinateDetail(final int userID,final int year) {
@@ -638,5 +638,31 @@ public class BusinessProcessing {
         } catch (InterruptedException ex) {
             return list;
         }
+    }
+
+     /**
+     *
+     * view log of userID form time to time
+     */
+    public String getUsername(final int userID) {
+        final StringBuilder name = new StringBuilder("");
+        thread = new Thread() {
+
+            @Override
+            public void run() {
+                name.append(logService.getUsername(userID));
+            }
+        };
+        thread.start();
+        // pause main thread execution
+        while (thread.isAlive()) {
+            try {
+                thread.join(1000);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+                return null;
+            }
+        }
+        return name.toString();
     }
 }

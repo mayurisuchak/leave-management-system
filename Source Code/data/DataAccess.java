@@ -311,6 +311,10 @@ public class DataAccess {
         return db.query("EXEC sp_PostionList");
     }
 
+    // view username
+    public RowSet viewUsername(int userID){
+        return db.query("EXEC sp_GetUsername " + userID);
+    }
 
     public void close(){
         db.close();
