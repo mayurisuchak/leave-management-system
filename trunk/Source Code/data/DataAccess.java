@@ -275,7 +275,7 @@ public class DataAccess {
     }
 
      //add new user
-    public int createUser(String username, int password, String fullname, int joinYear, int superiorID,	int position){
+    public int createUser(String username, String password, String fullname, int joinYear, int superiorID,	int position){
         ArrayList<Object> paramList = new ArrayList<Object>();
         paramList.add(username);
         paramList.add(password);
