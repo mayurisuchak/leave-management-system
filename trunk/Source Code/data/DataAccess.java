@@ -301,6 +301,17 @@ public class DataAccess {
         return db.queryUpdate("EXEC sp_RemoveCalendar ?", paramList);
     }
 
+    //get superior list
+    public RowSet getSuperiorList(){
+        return db.query("EXEC sp_ListSuperior");
+    }
+
+    //get position list
+    public RowSet getPositionList(){
+        return db.query("EXEC sp_PostionList");
+    }
+
+
     public void close(){
         db.close();
     }
