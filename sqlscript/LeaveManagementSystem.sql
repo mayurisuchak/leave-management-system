@@ -92,6 +92,12 @@ AS
 SELECT [Log].UserID, [Log].LeaveID, Time, [User].Username,  + ISNULL('Leave "' + Leave.[Subject] + '": ','') +  + [Log].[Action] as [Action]
 	FROM [Log] INNER JOIN [User] ON ([Log].UserID = [User].UserID) LEFT JOIN Leave ON ([Log].LeaveID = Leave.LeaveID)
 GO
+/* Create view Superior detail **************************************************************/
+CREATE VIEW SuperiorDetail
+AS
+SELECT DISTINCT [User].SuperiorID, B.Fullname, Position.PositionName
+	FROM ([User] INNER JOIN [User] AS B  ON ([User].[SuperiorID] = B.UserID)) INNER JOIN POSITION ON (B.PositionID = Position.PositionID)
+GO
 /*************************************************************************** Create Procedure View **************************************************************************/
 /* Create procedure view detail of a leave ***************************************************/
 CREATE PROCEDURE sp_DetailOfLeave
@@ -109,6 +115,12 @@ AS
 SELECT ID, Requestor, [Date], [Subject], [From], [To], [Status]
 	FROM LeaveFullDetail
 	WHERE SuperiorID = @SuperiorID AND YEAR([From]) LIKE @Year AND ([Status] = 'Not Approved' OR [Status] = 'Canceling')
+GO
+/* Create procedure view list of superior ********************************************/
+CREATE PROCEDURE sp_ListSuperior
+AS
+SELECT *
+	FROM SuperiorDetail
 GO
 /* Create procedure view list of leave detail application **********************************/
 CREATE PROCEDURE sp_LeaveDetail
@@ -204,6 +216,7 @@ SELECT COUNT(Code)
 	FROM SubordinateDetail
 	WHERE SuperiorID = @UserID
 GO
+
 /* Create procedure check login authentication ********************************************/
 CREATE PROCEDURE sp_CheckLogin
 	@Username VARCHAR(30),
