@@ -10,9 +10,13 @@ import data.DataObject;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sql.RowSet;
 import java.util.Date;
+import java.util.Vector;
 
 /**
  *
@@ -88,8 +92,8 @@ class RequestService {
     }
 
     /**
- * md5 input string and return crypted string
- */
+     * md5 input string and return crypted string
+     */
     private String md5String(String plaintext){
         try {
             // md5 password
@@ -106,6 +110,64 @@ class RequestService {
         } catch (NoSuchAlgorithmException ex) {
             ex.printStackTrace();
             return null;
+        }
+    }
+
+    /**
+     * return list of superior: vector which one elem is: array of object: [1] -> id, [2]-> Fullname + Position
+     */
+    public Vector<Object[]> getSuperiorList(){
+        Vector<Object[]> vector = new Vector<Object[]>();
+        try {
+            RowSet rs = da.getSuperiorList();
+            if (rs.first()) {
+                do
+                {
+                Object [] arr = new Object[2];
+                arr[0] = rs.getInt(1);
+                arr[1] = rs.getString(2) + " - " + rs.getString(3);
+                vector.add(arr);
+                }while(rs.next());
+            } else {
+                Object [] arr = {-1,"error"};
+                vector.add(arr);
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            Object [] arr = {-1,"error"};
+            vector.add(arr);
+        }finally{
+            return vector;
+        }
+    }
+
+    /**
+     * return list of superior: vector which one elem is: array of object: [1] -> positionid, [2]-> position name
+     */
+    public Vector<Object[]> getPositionList(){
+        Vector<Object[]> vector = new Vector<Object[]>();
+        try {
+            RowSet rs = da.getPositionList();
+            if (rs.first()) {
+                do
+                {
+                Object [] arr = new Object[2];
+                arr[0] = rs.getInt(1);
+                arr[1] = rs.getString(2);
+                vector.add(arr);
+                }while(rs.next());
+            } else {
+                Object [] arr = {-1,"error"};
+                vector.add(arr);
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            Object [] arr = {-1,"error"};
+            vector.add(arr);
+        }finally{
+            return vector;
         }
     }
 }
